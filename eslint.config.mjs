@@ -8,6 +8,8 @@ import tseslint from 'typescript-eslint'
 export default [
   { files: ['**/*.{js,mjs,cjs,ts}'] },
   { languageOptions: { globals: globals.browser } },
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     plugins: {
       '@stylistic': stylistic,
@@ -20,8 +22,7 @@ export default [
       '@stylistic/max-len': ['error', { 'code': 120, 'tabWidth': 2 }],
       '@stylistic/object-curly-spacing': ['error', 'always'],
       '@stylistic/semi': ['error', 'never'],
+      '@typescript-eslint/no-unused-vars': ['warn'],
     },
   },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
 ]
