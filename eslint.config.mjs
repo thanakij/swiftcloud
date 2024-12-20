@@ -33,7 +33,6 @@ export default [
       'indent': ['error', 2],
       'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
       'perfectionist/sort-imports': ['error', { type: 'natural' }],
-      'perfectionist/sort-objects': ['error', { type: 'natural' }],
     },
   },
 ]
