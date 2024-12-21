@@ -51,8 +51,7 @@ export function listSongs(c: Context) {
 }
 
 export function getSong(c: Context) {
-  // @ts-expect-error not typed well
-  const { id } = c.req.valid('param')
+  const id = c.req.param('id')
   console.log(id)
   return c.json({
     id,
