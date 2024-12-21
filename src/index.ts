@@ -49,7 +49,7 @@ app.doc('/openapi.json', (c) => ({
 }))
 
 // Swagger UI
-app.get('/doc', (c) => c.html(
+app.get('/docs', (c) => c.html(
   html`
 <!DOCTYPE html>
 <html lang="en">
