@@ -25,6 +25,8 @@ export const ListSongsParams = z
     year: z.coerce.number().optional().openapi({
       example: 2020,
     }),
+    offset: z.coerce.number().optional().default(0),
+    limit: z.coerce.number().optional().default(10),
     sort: z.string().optional().openapi({
       example: 'name',
     }),
