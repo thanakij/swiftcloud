@@ -1,6 +1,7 @@
 import { z } from '@hono/zod-openapi'
 
 import { Artist, Id as ArtistId } from '@/schemas/artists'
+import { Meta } from '@/schemas/common'
 import { Writer, Id as WriterId } from '@/schemas/writers'
 
 export const Id = z
@@ -13,7 +14,24 @@ export const SongId = z
     id: Id,
   })
 
-export const SongIdIn = z
+export const ListSongsParams = z
+  .object({
+    q: z.string().optional().openapi({
+      example: 'Song\'s name LIKE <q>',
+    }),
+    album: z.string().optional().openapi({
+      example: 'Folklore',
+    }),
+    year: z.coerce.number().optional().openapi({
+      example: 2020,
+    }),
+    sort: z.string().optional().openapi({
+      example: 'name',
+    }),
+  })
+  .openapi('ListSongsParams')
+
+export const GetSongParams = z
   .object({
     id: z.string().min(3).openapi({
       param: { name: 'id', in: 'path' },
@@ -53,3 +71,10 @@ export const SongIn = z
     }),
   })
   .openapi('SongIn')
+
+export const ListSongs = z
+  .object({
+    meta: Meta,
+    data: z.array(Song),
+  })
+  .openapi('ListSongs')

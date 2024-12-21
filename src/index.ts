@@ -1,17 +1,25 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { html } from 'hono/html'
 
-import { getSong, createSong } from '@/controllers/songs'
+import { listSongs, getSong, createSong } from '@/controllers/songs'
 import { GET, POST } from '@/routers'
 import { Errors } from '@/schemas/errors'
-import { SongId, SongIdIn, Song, SongIn } from '@/schemas/songs'
+import { ListSongsParams, ListSongs, GetSongParams, Song, SongIn, SongId } from '@/schemas/songs'
 
 const JSON = 'application/json'
 
 const app = new OpenAPIHono()
 
+app.openapi(GET('/songs',
+  { query: ListSongsParams },
+  {
+    200: { content: { [JSON]: { schema: ListSongs } }, description: 'Successful response' },
+    422: { content: { [JSON]: { schema: Errors } }, description: 'Validation error' },
+  },
+), listSongs)
+
 app.openapi(GET('/songs/{id}',
-  { params: SongIdIn },
+  { params: GetSongParams },
   {
     200: { content: { [JSON]: { schema: Song } }, description: 'Successful response' },
     422: { content: { [JSON]: { schema: Errors } }, description: 'Validation error' },
