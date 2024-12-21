@@ -28,5 +28,5 @@ export async function createSong(c: Context) {
   const body = await c.req.parseBody()
   console.log(body)
   const id = '101'
-  return c.json({ id }, 201)
+  return c.json({ id }, 201, { Location: `/songs/${id}` })
 }
