@@ -1,8 +1,9 @@
-import { Context } from 'hono'
+import type { Context } from 'hono'
 
 export function listSongs(c: Context) {
-  const year = c.req.query('year')
-  console.log(year)
+  // @ts-expect-error not typed well
+  const query = c.req.valid('query')
+  console.log(query)
   return c.json({
     meta: {
       total: 10,
@@ -50,7 +51,9 @@ export function listSongs(c: Context) {
 }
 
 export function getSong(c: Context) {
-  const id = c.req.param('id')
+  // @ts-expect-error not typed well
+  const { id } = c.req.valid('param')
+  console.log(id)
   return c.json({
     id,
     name: 'The 1',
@@ -74,7 +77,8 @@ export function getSong(c: Context) {
 }
 
 export async function createSong(c: Context) {
-  const body = await c.req.parseBody()
+  // @ts-expect-error not typed well
+  const body = c.req.valid('json')
   console.log(body)
   const id = '101'
   return c.json({ id }, 201, { Location: `/songs/${id}` })
