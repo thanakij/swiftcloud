@@ -1,7 +1,7 @@
 import { z } from '@hono/zod-openapi'
 
-import { Artist } from './artists'
-import { Writer } from './writers'
+import { Artist } from '@/schemas/artists'
+import { Writer } from '@/schemas/writers'
 
 export const SongId = z
   .object({

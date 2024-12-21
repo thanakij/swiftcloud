@@ -1,10 +1,10 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { html } from 'hono/html'
 
-import { getSong, createSong } from './controllers/songs'
-import { GET, POST } from './routers'
-import { Errors } from './schemas/errors'
-import { SongId, SongIdIn, Song, SongIn } from './schemas/songs'
+import { getSong, createSong } from '@/controllers/songs'
+import { GET, POST } from '@/routers'
+import { Errors } from '@/schemas/errors'
+import { SongId, SongIdIn, Song, SongIn } from '@/schemas/songs'
 
 const JSON = 'application/json'
 

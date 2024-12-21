@@ -32,7 +32,7 @@ export default [
       '@typescript-eslint/no-unused-vars': ['warn'],
       'indent': ['error', 2],
       'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
-      'perfectionist/sort-imports': ['error', { type: 'natural' }],
+      'perfectionist/sort-imports': ['error', { type: 'natural', tsconfigRootDir: '.' }],
     },
   },
 ]
