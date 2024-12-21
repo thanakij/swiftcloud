@@ -1,13 +1,16 @@
 import { z } from '@hono/zod-openapi'
 
-import { Artist } from '@/schemas/artists'
-import { Writer } from '@/schemas/writers'
+import { Artist, Id as ArtistId } from '@/schemas/artists'
+import { Writer, Id as WriterId } from '@/schemas/writers'
+
+export const Id = z
+  .string().openapi({
+    example: '100',
+  })
 
 export const SongId = z
   .object({
-    id: z.string().openapi({
-      example: '100',
-    }),
+    id: Id,
   })
 
 export const SongIdIn = z
@@ -20,9 +23,7 @@ export const SongIdIn = z
 
 export const Song = z
   .object({
-    id: z.string().openapi({
-      example: '100',
-    }),
+    id: Id,
     name: z.string().openapi({
       example: 'The 1',
     }),
@@ -42,8 +43,8 @@ export const SongIn = z
     name: z.string().openapi({
       example: 'The 1',
     }),
-    artist: Artist,
-    writers: z.array(Writer).optional(),
+    artist: ArtistId,
+    writers: z.array(WriterId).optional(),
     album: z.string().openapi({
       example: 'Folklore',
     }).optional(),

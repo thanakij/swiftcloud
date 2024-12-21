@@ -1,10 +1,13 @@
 import { z } from '@hono/zod-openapi'
 
+export const Id = z
+  .string().openapi({
+    example: '1',
+  })
+
 export const Writer = z
   .object({
-    id: z.string().openapi({
-      example: '1',
-    }),
+    id: Id,
     name: z.string().openapi({
       example: 'Taylor Swift',
     }),
