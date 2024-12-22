@@ -31,7 +31,7 @@ export class MockSongRepository implements SongRepository {
     if (!artist) throw new Error('Artist not found')
     const writers: Writer[] = []
     if (writers_id) {
-      for (const [i, id] of writers_id) {
+      for (const [i, id] of writers_id.entries()) {
         const writer = await this.writerRepository.get(id)
         if (!writer) throw new Error(`Writer[${i}] not found`)
         writers.push(writer)
