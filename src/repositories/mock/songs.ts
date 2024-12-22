@@ -1,46 +1,19 @@
+import type { ArtistRepository } from '@/repositories/artists'
 import type { SongRepository } from '@/repositories/songs'
+import type { WriterRepository } from '@/repositories/writers'
 import type { ListSongsParams, ListSongs, Id, Song, SongIn } from '@/types/songs'
 
-const DATA: Song[] = [
-  {
-    id: '9635afbd-4956-4633-b03a-ada3b243d47e',
-    name: 'The 1',
-    artist: {
-      id: '88e446b3-c370-43aa-8962-c0dc316c298f',
-      name: 'Taylor Swift',
-    },
-    writers: [
-      {
-        id: '88e446b3-c370-43aa-8962-c0dc316c298f',
-        name: 'Taylor Swift',
-      },
-      {
-        id: 'fe46ccbc-f4ec-4ecd-b922-7430c31664c9',
-        name: 'Aaron Dessner',
-      },
-    ],
-    album: 'Folklore',
-    year: 2020,
-  },
-  {
-    id: '4b950f5a-d85c-4869-b84a-6e081d671aab',
-    name: 'Begin Again',
-    artist: {
-      id: '88e446b3-c370-43aa-8962-c0dc316c298f',
-      name: 'Taylor Swift',
-    },
-    writers: [
-      {
-        id: '88e446b3-c370-43aa-8962-c0dc316c298f',
-        name: 'Taylor Swift',
-      },
-    ],
-    album: 'Red',
-    year: 2012,
-  },
-]
+import { DATA } from '@/data/mock'
 
 export class MockSongRepository implements SongRepository {
+  private artistRepository: ArtistRepository
+  private writerRepository: WriterRepository
+
+  public constructor(artistRepository: ArtistRepository, writerRepository: WriterRepository) {
+    this.artistRepository = artistRepository
+    this.writerRepository = writerRepository
+  }
+
   async list(param: ListSongsParams): Promise<ListSongs> {
     const data = DATA.slice(param.offset, param.limit)
     return { meta: { total: DATA.length, count: data.length }, data }
@@ -53,19 +26,22 @@ export class MockSongRepository implements SongRepository {
 
   async create(input: SongIn): Promise<Id> {
     const { name, artist_id, writers_id, album, year } = input
+    const artist = await this.artistRepository.get(artist_id)
+    if (!artist) throw new Error('Artist not found')
+    let writers
+    if (writers_id) {
+      writers = []
+      for (const [i, id] of writers_id) {
+        const writer = await this.writerRepository.get(id)
+        if (!writer) throw new Error(`Writer[${i}] not found`)
+        writers.push(writer)
+      }
+    }
     const song: Song = {
       id: crypto.randomUUID(),
       name,
-      artist: {
-        id: artist_id,
-        name: 'artist',
-      },
-      writers: [
-        {
-          id: 'fe46ccbc-f4ec-4ecd-b922-7430c31664c9',
-          name: 'Aaron Dessner',
-        },
-      ],
+      artist,
+      writers,
       album,
       year,
     }

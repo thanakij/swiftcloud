@@ -22,6 +22,7 @@ app.openapi(GET('/songs/{id}',
   { params: GetSongParams },
   {
     200: { content: { [JSON]: { schema: Song } }, description: 'Successful response' },
+    404: { content: { [JSON]: { schema: Errors } }, description: 'Not found' },
     422: { content: { [JSON]: { schema: Errors } }, description: 'Validation error' },
   },
 ), getSong)
@@ -30,7 +31,9 @@ app.openapi(POST('/songs',
   { body: { content: { [JSON]: { schema: SongIn } } } },
   {
     201: { content: { [JSON]: { schema: SongId } }, description: 'Successful response' },
+    404: { content: { [JSON]: { schema: Errors } }, description: 'Not found' },
     422: { content: { [JSON]: { schema: Errors } }, description: 'Validation error' },
+    500: { content: { [JSON]: { schema: Errors } }, description: 'Cannot save' },
   },
 ), createSong)
 
