@@ -8,10 +8,21 @@ import { listSongs, getSong, createSong } from '@/controllers/songs'
 import { GET, POST } from '@/routers'
 import { Errors } from '@/schemas/errors'
 import { ListSongsParams, ListSongs, GetSongParams, Song, SongIn, SongId } from '@/schemas/songs'
+import { formatZodErrors } from '@/utils'
 
 const JSON = 'application/json'
 
-const app = new OpenAPIHono()
+const app = new OpenAPIHono({
+  defaultHook: (result, c) => {
+    if (!result.success) {
+      console.error(result.error)
+      return c.json({
+        errors: formatZodErrors(result.error),
+        source: 'ZodError',
+      } as ErrorsType, 422)
+    }
+  },
+})
 
 // https://hono.dev/docs/api/exception#handling-httpexception
 app.onError((err, c) => {
