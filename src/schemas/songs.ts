@@ -63,8 +63,8 @@ export const SongIn = z
     name: z.string().openapi({
       example: 'The 1',
     }),
-    artist: ArtistId,
-    writers: z.array(WriterId).optional(),
+    artist_id: ArtistId,
+    writers_id: z.array(WriterId).optional(),
     album: z.string().openapi({
       example: 'Folklore',
     }).optional(),

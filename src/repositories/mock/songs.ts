@@ -52,7 +52,7 @@ export class MockSongRepository implements SongRepository {
   }
 
   async create(input: SongIn): Promise<Id> {
-    const { name, artist: artist_id, writers: writers_id, album, year } = input
+    const { name, artist_id, writers_id, album, year } = input
     const song: Song = {
       id: crypto.randomUUID(),
       name,
