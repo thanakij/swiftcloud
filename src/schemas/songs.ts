@@ -16,18 +16,18 @@ export const SongId = z
 
 export const ListSongsParams = z
   .object({
-    q: z.string().optional().openapi({
+    q: z.string().nullable().optional().default(null).openapi({
       example: 'Song\'s name LIKE <q>',
     }),
-    album: z.string().optional().openapi({
+    album: z.string().nullable().optional().default(null).openapi({
       example: 'Folklore',
     }),
-    year: z.coerce.number().optional().openapi({
+    year: z.coerce.number().nullable().optional().default(null).openapi({
       example: 2020,
     }),
     offset: z.coerce.number().optional().default(0),
     limit: z.coerce.number().optional().default(10),
-    sort: z.string().optional().openapi({
+    sort: z.string().nullable().optional().default(null).openapi({
       example: 'name',
     }),
   })
@@ -48,10 +48,10 @@ export const Song = z
       example: 'The 1',
     }),
     artist: Artist,
-    writers: z.array(Writer).optional(),
-    album: z.string().openapi({
+    writers: z.array(Writer).optional().default([]),
+    album: z.string().nullable().openapi({
       example: 'Folklore',
-    }).optional(),
+    }).optional().default(null),
     year: z.number().openapi({
       example: 2020,
     }),
@@ -64,10 +64,10 @@ export const SongIn = z
       example: 'The 1',
     }),
     artist_id: ArtistId,
-    writers_id: z.array(WriterId).optional(),
-    album: z.string().openapi({
+    writers_id: z.array(WriterId).optional().default([]),
+    album: z.string().nullable().openapi({
       example: 'Folklore',
-    }).optional(),
+    }).optional().default(null),
     year: z.number().openapi({
       example: 2020,
     }),

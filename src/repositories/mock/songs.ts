@@ -2,6 +2,7 @@ import type { ArtistRepository } from '@/repositories/artists'
 import type { SongRepository } from '@/repositories/songs'
 import type { WriterRepository } from '@/repositories/writers'
 import type { ListSongsParams, ListSongs, Id, Song, SongIn } from '@/types/songs'
+import type { Writer } from '@/types/writers'
 
 import { DATA } from '@/data/mock'
 
@@ -28,9 +29,8 @@ export class MockSongRepository implements SongRepository {
     const { name, artist_id, writers_id, album, year } = input
     const artist = await this.artistRepository.get(artist_id)
     if (!artist) throw new Error('Artist not found')
-    let writers
+    const writers: Writer[] = []
     if (writers_id) {
-      writers = []
       for (const [i, id] of writers_id) {
         const writer = await this.writerRepository.get(id)
         if (!writer) throw new Error(`Writer[${i}] not found`)
