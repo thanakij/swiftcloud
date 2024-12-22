@@ -1,3 +1,4 @@
+import { listAlbums, getAlbum, createAlbum } from '@/controllers/albums'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { html } from 'hono/html'
 import { HTTPException } from 'hono/http-exception'
@@ -6,8 +7,9 @@ import type { Errors as ErrorsType } from '@/types/common'
 
 import { listSongs, getSong, createSong } from '@/controllers/songs'
 import { GET, POST } from '@/routers'
+import { ListAlbumsParam, ListAlbums, GetAlbumParam, Album, AlbumIn, AlbumId } from '@/schemas/albums'
 import { Errors } from '@/schemas/errors'
-import { ListSongsParams, ListSongs, GetSongParams, Song, SongIn, SongId } from '@/schemas/songs'
+import { ListSongsParam, ListSongs, GetSongParam, Song, SongIn, SongId } from '@/schemas/songs'
 import { formatZodErrors } from '@/utils'
 
 const JSON = 'application/json'
@@ -39,8 +41,35 @@ app.onError((err, c) => {
   } as ErrorsType, 500)
 })
 
+app.openapi(GET('/albums',
+  { query: ListAlbumsParam },
+  {
+    200: { content: { [JSON]: { schema: ListAlbums } }, description: 'Successful response' },
+    422: { content: { [JSON]: { schema: Errors } }, description: 'Validation error' },
+  },
+), listAlbums)
+
+app.openapi(GET('/albums/{id}',
+  { params: GetAlbumParam },
+  {
+    200: { content: { [JSON]: { schema: Album } }, description: 'Successful response' },
+    404: { content: { [JSON]: { schema: Errors } }, description: 'Not found' },
+    422: { content: { [JSON]: { schema: Errors } }, description: 'Validation error' },
+  },
+), getAlbum)
+
+app.openapi(POST('/albums',
+  { body: { content: { [JSON]: { schema: AlbumIn } } } },
+  {
+    201: { content: { [JSON]: { schema: AlbumId } }, description: 'Successful response' },
+    404: { content: { [JSON]: { schema: Errors } }, description: 'Not found' },
+    422: { content: { [JSON]: { schema: Errors } }, description: 'Validation error' },
+    500: { content: { [JSON]: { schema: Errors } }, description: 'Cannot save' },
+  },
+), createAlbum)
+
 app.openapi(GET('/songs',
-  { query: ListSongsParams },
+  { query: ListSongsParam },
   {
     200: { content: { [JSON]: { schema: ListSongs } }, description: 'Successful response' },
     422: { content: { [JSON]: { schema: Errors } }, description: 'Validation error' },
@@ -48,7 +77,7 @@ app.openapi(GET('/songs',
 ), listSongs)
 
 app.openapi(GET('/songs/{id}',
-  { params: GetSongParams },
+  { params: GetSongParam },
   {
     200: { content: { [JSON]: { schema: Song } }, description: 'Successful response' },
     404: { content: { [JSON]: { schema: Errors } }, description: 'Not found' },

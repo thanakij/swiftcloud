@@ -1,32 +1,44 @@
+import type { AlbumRepository } from '@/repositories/albums'
 import type { ArtistRepository } from '@/repositories/artists'
 import type { SongRepository } from '@/repositories/songs'
 import type { WriterRepository } from '@/repositories/writers'
-import type { ListSongsParams, ListSongs, Id, Song, SongIn } from '@/types/songs'
+import type { ListSongsParam, ListSongs, Id, Song, SongIn } from '@/types/songs'
 import type { Writer } from '@/types/writers'
 
-import { DATA } from '@/data/mock'
+import { SONGS } from '@/data/mock'
 
 export class MockSongRepository implements SongRepository {
+  private albumRepository: AlbumRepository
   private artistRepository: ArtistRepository
   private writerRepository: WriterRepository
 
-  public constructor(artistRepository: ArtistRepository, writerRepository: WriterRepository) {
+  public constructor(
+    albumRepository: AlbumRepository,
+    artistRepository: ArtistRepository,
+    writerRepository: WriterRepository,
+  ) {
+    this.albumRepository = albumRepository
     this.artistRepository = artistRepository
     this.writerRepository = writerRepository
   }
 
-  async list(param: ListSongsParams): Promise<ListSongs> {
-    const data = DATA.slice(param.offset, param.limit)
-    return { meta: { total: DATA.length, count: data.length }, data }
+  async list(param: ListSongsParam): Promise<ListSongs> {
+    const data = SONGS.slice(param.offset, param.limit)
+    return { meta: { total: SONGS.length, count: data.length }, data }
   }
 
   async get(id: Id): Promise<Song | null> {
-    const founds = DATA.filter((each) => each.id === id)
-    return founds ? founds[0] : null
+    const founds = SONGS.filter((each) => each.id === id)
+    return founds.length > 0 ? founds[0] : null
   }
 
   async create(input: SongIn): Promise<Id> {
-    const { name, artist_id, writers_id, album, year } = input
+    const { name, artist_id, writers_id, album_id, year } = input
+    let album = null
+    if (album_id !== null) {
+      album = await this.albumRepository.get(album_id)
+      if (!album) throw new Error('Album not found')
+    }
     const artist = await this.artistRepository.get(artist_id)
     if (!artist) throw new Error('Artist not found')
     const writers: Writer[] = []
@@ -45,7 +57,7 @@ export class MockSongRepository implements SongRepository {
       album,
       year,
     }
-    DATA.push(song)
+    SONGS.push(song)
     return song.id
   }
 }
