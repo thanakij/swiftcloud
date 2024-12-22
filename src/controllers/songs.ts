@@ -1,86 +1,33 @@
 import type { Context } from 'hono'
 
+import { HTTPException } from 'hono/http-exception'
+
 import type { ListSongsParams, Id, SongIn } from '@/types/songs'
 
-export function listSongs(c: Context) {
+import { MockSongRepository } from '@/repositories/mock/songs'
+
+export async function listSongs(c: Context) {
   // @ts-expect-error not typed well
   const query: ListSongsParams = c.req.valid('query')
   console.log(query)
-  return c.json({
-    meta: {
-      total: 10,
-      count: 2,
-    },
-    data: [
-      {
-        id: '100',
-        name: 'The 1',
-        artist: {
-          id: '1',
-          name: 'Taylor Swift',
-        },
-        writers: [
-          {
-            id: '1',
-            name: 'Taylor Swift',
-          },
-          {
-            id: '2',
-            name: 'Aaron Dessner',
-          },
-        ],
-        album: 'Folklore',
-        year: 2020,
-      },
-      {
-        id: '101',
-        name: 'Begin Again',
-        artist: {
-          id: '1',
-          name: 'Taylor Swift',
-        },
-        writers: [
-          {
-            id: '1',
-            name: 'Taylor Swift',
-          },
-        ],
-        album: 'Red',
-        year: 2012,
-      },
-    ],
-  }, 200)
+  const songRepository = new MockSongRepository()
+  return c.json(await songRepository.list(query), 200)
 }
 
-export function getSong(c: Context) {
+export async function getSong(c: Context) {
   const id: Id = c.req.param('id')
   console.log(id)
-  return c.json({
-    id,
-    name: 'The 1',
-    artist: {
-      id: '1',
-      name: 'Taylor Swift',
-    },
-    writers: [
-      {
-        id: '1',
-        name: 'Taylor Swift',
-      },
-      {
-        id: '2',
-        name: 'Aaron Dessner',
-      },
-    ],
-    album: 'Folklore',
-    year: 2020,
-  }, 200)
+  const songRepository = new MockSongRepository()
+  const song = await songRepository.get(id)
+  if (!song) throw new HTTPException(404, { message: 'Song not found' })
+  return c.json(song, 200)
 }
 
 export async function createSong(c: Context) {
   // @ts-expect-error not typed well
   const body: SongIn = c.req.valid('json')
   console.log(body)
-  const id = '101'
+  const songRepository = new MockSongRepository()
+  const id = await songRepository.create(body)
   return c.json({ id }, 201, { Location: `/songs/${id}` })
 }
