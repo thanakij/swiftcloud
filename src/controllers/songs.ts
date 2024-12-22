@@ -21,7 +21,7 @@ export async function listSongs(c: Context) {
 }
 
 export async function getSong(c: Context) {
-  const id: Id = c.req.param('id')
+  const id = c.req.param('id') as Id
   console.log(id)
   const albumRepository = new MockAlbumRepository()
   const artistRepository = new MockArtistRepository()

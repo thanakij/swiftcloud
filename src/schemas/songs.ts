@@ -6,7 +6,7 @@ import { Meta } from '@/schemas/common'
 import { Writer, Id as WriterId } from '@/schemas/writers'
 
 export const Id = z
-  .string().uuid().openapi({
+  .string().uuid().brand<'SongId'>().openapi({
     example: '9635afbd-4956-4633-b03a-ada3b243d47e',
   })
 

@@ -3,7 +3,7 @@ import { z } from '@hono/zod-openapi'
 import { Meta } from '@/schemas/common'
 
 export const Id = z
-  .string().uuid().openapi({
+  .string().uuid().brand<'AlbumId'>().openapi({
     example: 'aeb1e256-9e86-4bd1-899b-93c1fd8b55e9',
   })
 

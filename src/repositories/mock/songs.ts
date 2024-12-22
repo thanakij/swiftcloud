@@ -50,7 +50,7 @@ export class MockSongRepository implements SongRepository {
       }
     }
     const song: Song = {
-      id: crypto.randomUUID(),
+      id: crypto.randomUUID() as Id,
       name,
       artist,
       writers,

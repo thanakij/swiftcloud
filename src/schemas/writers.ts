@@ -1,7 +1,7 @@
 import { z } from '@hono/zod-openapi'
 
 export const Id = z
-  .string().uuid().openapi({
+  .string().uuid().brand<'WriterId'>().openapi({
     example: '88e446b3-c370-43aa-8962-c0dc316c298f',
   })
 

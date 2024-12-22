@@ -17,7 +17,7 @@ export class MockAlbumRepository implements AlbumRepository {
   async create(input: AlbumIn): Promise<Id> {
     const { name } = input
     const album: Album = {
-      id: crypto.randomUUID(),
+      id: crypto.randomUUID() as Id,
       name,
     }
     ALBUMS.push(album)
