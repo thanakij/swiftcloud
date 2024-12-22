@@ -1,8 +1,10 @@
 import type { Context } from 'hono'
 
+import type { ListSongsParams, Id, SongIn } from '@/types/songs'
+
 export function listSongs(c: Context) {
   // @ts-expect-error not typed well
-  const query = c.req.valid('query')
+  const query: ListSongsParams = c.req.valid('query')
   console.log(query)
   return c.json({
     meta: {
@@ -51,7 +53,7 @@ export function listSongs(c: Context) {
 }
 
 export function getSong(c: Context) {
-  const id = c.req.param('id')
+  const id: Id = c.req.param('id')
   console.log(id)
   return c.json({
     id,
@@ -77,7 +79,7 @@ export function getSong(c: Context) {
 
 export async function createSong(c: Context) {
   // @ts-expect-error not typed well
-  const body = c.req.valid('json')
+  const body: SongIn = c.req.valid('json')
   console.log(body)
   const id = '101'
   return c.json({ id }, 201, { Location: `/songs/${id}` })
