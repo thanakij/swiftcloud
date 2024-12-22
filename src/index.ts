@@ -1,5 +1,8 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { html } from 'hono/html'
+import { HTTPException } from 'hono/http-exception'
+
+import type { Errors as ErrorsType } from '@/types/common'
 
 import { listSongs, getSong, createSong } from '@/controllers/songs'
 import { GET, POST } from '@/routers'
@@ -9,6 +12,21 @@ import { ListSongsParams, ListSongs, GetSongParams, Song, SongIn, SongId } from 
 const JSON = 'application/json'
 
 const app = new OpenAPIHono()
+
+// https://hono.dev/docs/api/exception#handling-httpexception
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    return c.json({
+      errors: [err.message ?? 'Unknown HTTPException error'],
+      source: err.cause ? String(err.cause) : null,
+    } as ErrorsType, err.status)
+  }
+  // other errors
+  return c.json({
+    errors: [err.message ?? 'Internal server error'],
+    source: err.cause ? String(err.cause) : null,
+  } as ErrorsType, 500)
+})
 
 app.openapi(GET('/songs',
   { query: ListSongsParams },
