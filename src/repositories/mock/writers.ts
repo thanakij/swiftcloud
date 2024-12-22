@@ -5,7 +5,7 @@ import { DATA } from '@/data/mock'
 
 export class MockWriterRepository implements WriterRepository {
   async get(id: Id): Promise<Writer | null> {
-    const founds = DATA.filter((each) => each.id === id)
-    return founds ? founds[0] : null
+    const founds = DATA.filter((each) => each.writers.filter((writer) => writer.id === id).length > 0)
+    return founds.length > 0 ? founds[0].writers.filter((writer) => writer.id === id)[0] : null
   }
 }

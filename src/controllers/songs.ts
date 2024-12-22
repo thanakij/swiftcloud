@@ -40,6 +40,7 @@ export async function createSong(c: Context) {
     const id = await songRepository.create(body)
     return c.json({ id }, 201, { Location: `/songs/${id}` })
   } catch (e) {
+    console.error(e)
     throw new HTTPException(500, { message: 'Cannot save', cause: e })
   }
 }

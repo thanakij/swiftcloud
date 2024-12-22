@@ -5,7 +5,7 @@ import { DATA } from '@/data/mock'
 
 export class MockArtistRepository implements ArtistRepository {
   async get(id: Id): Promise<Artist | null> {
-    const founds = DATA.filter((each) => each.id === id)
-    return founds ? founds[0] : null
+    const founds = DATA.filter((each) => each.artist.id === id)
+    return founds.length > 0 ? founds[0].artist : null
   }
 }
