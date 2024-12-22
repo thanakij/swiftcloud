@@ -1,8 +1,8 @@
 import { z } from '@hono/zod-openapi'
 
 export const Id = z
-  .string().openapi({
-    example: '1',
+  .string().uuid().openapi({
+    example: '88e446b3-c370-43aa-8962-c0dc316c298f',
   })
 
 export const Artist = z

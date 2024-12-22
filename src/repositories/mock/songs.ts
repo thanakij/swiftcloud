@@ -3,19 +3,19 @@ import type { ListSongsParams, ListSongs, Id, Song, SongIn } from '@/types/songs
 
 const DATA: Song[] = [
   {
-    id: '100',
+    id: '9635afbd-4956-4633-b03a-ada3b243d47e',
     name: 'The 1',
     artist: {
-      id: '1',
+      id: '88e446b3-c370-43aa-8962-c0dc316c298f',
       name: 'Taylor Swift',
     },
     writers: [
       {
-        id: '1',
+        id: '88e446b3-c370-43aa-8962-c0dc316c298f',
         name: 'Taylor Swift',
       },
       {
-        id: '2',
+        id: 'fe46ccbc-f4ec-4ecd-b922-7430c31664c9',
         name: 'Aaron Dessner',
       },
     ],
@@ -23,15 +23,15 @@ const DATA: Song[] = [
     year: 2020,
   },
   {
-    id: '101',
+    id: '4b950f5a-d85c-4869-b84a-6e081d671aab',
     name: 'Begin Again',
     artist: {
-      id: '1',
+      id: '88e446b3-c370-43aa-8962-c0dc316c298f',
       name: 'Taylor Swift',
     },
     writers: [
       {
-        id: '1',
+        id: '88e446b3-c370-43aa-8962-c0dc316c298f',
         name: 'Taylor Swift',
       },
     ],
@@ -62,7 +62,7 @@ export class MockSongRepository implements SongRepository {
       },
       writers: [
         {
-          id: '2',
+          id: 'fe46ccbc-f4ec-4ecd-b922-7430c31664c9',
           name: 'Aaron Dessner',
         },
       ],

@@ -5,8 +5,8 @@ import { Meta } from '@/schemas/common'
 import { Writer, Id as WriterId } from '@/schemas/writers'
 
 export const Id = z
-  .string().openapi({
-    example: '100',
+  .string().uuid().openapi({
+    example: '9635afbd-4956-4633-b03a-ada3b243d47e',
   })
 
 export const SongId = z
@@ -35,9 +35,9 @@ export const ListSongsParams = z
 
 export const GetSongParams = z
   .object({
-    id: z.string().min(3).openapi({
+    id: z.string().uuid().openapi({
       param: { name: 'id', in: 'path' },
-      example: '100',
+      example: '9635afbd-4956-4633-b03a-ada3b243d47e',
     }),
   })
 
