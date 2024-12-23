@@ -21,7 +21,7 @@ const app = new OpenAPIHono({
       return c.json({
         errors: formatZodErrors(result.error),
         source: 'ZodError',
-      } as ErrorsType, 422)
+      } satisfies ErrorsType, 422)
     }
   },
 })
@@ -32,13 +32,13 @@ app.onError((err, c) => {
     return c.json({
       errors: [err.message ?? 'Unknown HTTPException error'],
       source: err.cause ? String(err.cause) : null,
-    } as ErrorsType, err.status)
+    } satisfies ErrorsType, err.status)
   }
   // other errors
   return c.json({
     errors: [err.message ?? 'Internal server error'],
     source: err.cause ? String(err.cause) : null,
-  } as ErrorsType, 500)
+  } satisfies ErrorsType, 500)
 })
 
 app.openapi(GET('/albums',
