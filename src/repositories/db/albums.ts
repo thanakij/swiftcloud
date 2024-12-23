@@ -16,18 +16,19 @@ export class DbAlbumRepository implements AlbumRepository {
   }
 
   async list(param: ListAlbumsParam): Promise<ListAlbums> {
+    const filters = param.q ? like(albums.name, `%${param.q}%`) : undefined
     // @ts-expect-error not typed well
     const orderByFields = getOrderBy(albums, param.sort ?? 'name')
     const results = await this.db
       .select()
       .from(albums)
-      .where(like(albums.name, `%${param.q}%`))
+      .where(filters)
       .orderBy(...orderByFields) // multiple fields
       .limit(param.limit)
       .offset(param.offset)
     console.log(results)
     const data: Album[] = results.map((each) => ({ id: each.uuid as Id, name: each.name }))
-    const result = await this.db.select({ total: count() }).from(albums).where(like(albums.name, `%${param.q}%`))
+    const result = await this.db.select({ total: count() }).from(albums).where(filters)
     const total = result[0].total
     return { meta: { total, count: data.length }, data }
   }

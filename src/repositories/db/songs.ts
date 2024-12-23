@@ -32,12 +32,13 @@ export class DbSongRepository implements SongRepository {
   }
 
   async list(param: ListSongsParam): Promise<ListSongs> {
+    const filters = param.q ? like(songs.name, `%${param.q}%`) : undefined
     // @ts-expect-error not typed well
     const orderByFields = getOrderBy(songs, param.sort ?? 'name')
     const results = await this.db
       .select()
       .from(songs)
-      .where(like(songs.name, `%${param.q}%`))
+      .where(filters)
       .orderBy(...orderByFields) // multiple fields
       .limit(param.limit)
       .offset(param.offset)
@@ -48,7 +49,7 @@ export class DbSongRepository implements SongRepository {
       const album: Album | null = null
       return { id: each.uuid as Id, name: each.name, artists, writers, album, year: each.released_year }
     })
-    const result = await this.db.select({ total: count() }).from(songs).where(like(songs.name, `%${param.q}%`))
+    const result = await this.db.select({ total: count() }).from(songs).where(filters)
     const total = result[0].total
     return { meta: { total, count: data.length }, data }
   }
