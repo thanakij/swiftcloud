@@ -1,10 +1,10 @@
-import { listAlbums, getAlbum, createAlbum } from '@/controllers/albums'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { html } from 'hono/html'
 import { HTTPException } from 'hono/http-exception'
 
 import type { Errors as ErrorsType } from '@/types/common'
 
+import { listAlbums, getAlbum, createAlbum } from '@/controllers/albums'
 import { listSongs, getSong, createSong } from '@/controllers/songs'
 import { GET, POST } from '@/routers'
 import { ListAlbumsParam, ListAlbums, GetAlbumParam, Album, AlbumIn, AlbumId } from '@/schemas/albums'

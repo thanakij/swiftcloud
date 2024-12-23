@@ -20,9 +20,7 @@ export const ListSongsParam = z
     q: z.string().nullable().optional().default(null).openapi({
       example: 'Song\'s name LIKE <q>',
     }),
-    album: z.string().nullable().optional().default(null).openapi({
-      example: 'Folklore',
-    }),
+    album_id: AlbumId.nullable().optional().default(null),
     year: z.coerce.number().nullable().optional().default(null).openapi({
       example: 2020,
     }),
