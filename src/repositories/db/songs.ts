@@ -1,6 +1,6 @@
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
-import { count, eq, like } from 'drizzle-orm'
+import { count, eq, ilike } from 'drizzle-orm'
 
 import type { AlbumRepository } from '@/repositories/albums'
 import type { ArtistRepository } from '@/repositories/artists'
@@ -32,7 +32,7 @@ export class DbSongRepository implements SongRepository {
   }
 
   async list(param: ListSongsParam): Promise<ListSongs> {
-    const filters = param.q ? like(songs.name, `%${param.q}%`) : undefined
+    const filters = param.q ? ilike(songs.name, `%${param.q}%`) : undefined
     // @ts-expect-error not typed well
     const orderByFields = getOrderBy(songs, param.sort ?? 'name')
     const results = await this.db
