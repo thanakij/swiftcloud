@@ -30,7 +30,7 @@ export const songs = pgTable('songs', {
   uuid: uuid().notNull().defaultRandom().unique(),
   name: varchar('name', { length: 255 }).notNull(),
   album_id: integer().references(() => albums.id),
-  released_year: integer(),
+  released_year: integer().notNull(),
   total_plays: integer().notNull().default(0),
   created_at: timestamp().notNull().defaultNow(),
   updated_at: timestamp().notNull().defaultNow(),
