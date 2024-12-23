@@ -9,4 +9,4 @@ DB_NAME=${DB_NAME}
 
 export DATABASE_URL=${DB_TYPE}://${DB_USER}:${DB_PASS}@${DB_HOST}:5432/${DB_NAME}
 
-npx pg-migrations apply --directory ./data/migrations
+npx drizzle-kit migrate
