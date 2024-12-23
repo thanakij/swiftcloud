@@ -40,13 +40,22 @@ export const GetSongParam = z
     }),
   })
 
+export const ArtistRole = z
+  .enum(['primary', 'featuring']).openapi({
+    example: 'primary',
+  })
+
+export const ArtistWithRole = Artist.extend({
+  role: ArtistRole,
+})
+
 export const Song = z
   .object({
     id: Id,
     name: z.string().openapi({
       example: 'The 1',
     }),
-    artist: Artist,
+    artists: z.array(ArtistWithRole),
     writers: z.array(Writer).optional().default([]),
     album: Album.nullable().optional().default(null),
     year: z.number().openapi({
@@ -60,7 +69,8 @@ export const SongIn = z
     name: z.string().openapi({
       example: 'The 1',
     }),
-    artist_id: ArtistId,
+    artists_id: z.array(ArtistId),
+    artists_role: z.array(ArtistRole),
     writers_id: z.array(WriterId).optional().default([]),
     album_id: AlbumId.nullable().optional().default(null),
     year: z.number().openapi({

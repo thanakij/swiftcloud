@@ -142,10 +142,13 @@ export const SONGS: Song[] = [
   {
     id: '9635afbd-4956-4633-b03a-ada3b243d47e' as SongId,
     name: 'The 1',
-    artist: {
-      id: '88e446b3-c370-43aa-8962-c0dc316c298f' as ArtistId,
-      name: 'Taylor Swift',
-    },
+    artists: [
+      {
+        id: '88e446b3-c370-43aa-8962-c0dc316c298f' as ArtistId,
+        name: 'Taylor Swift',
+        role: 'primary',
+      },
+    ],
     writers: [
       {
         id: '88e446b3-c370-43aa-8962-c0dc316c298f' as WriterId,
@@ -165,10 +168,13 @@ export const SONGS: Song[] = [
   {
     id: '4b950f5a-d85c-4869-b84a-6e081d671aab' as SongId,
     name: 'Begin Again',
-    artist: {
-      id: '88e446b3-c370-43aa-8962-c0dc316c298f' as ArtistId,
-      name: 'Taylor Swift',
-    },
+    artists: [
+      {
+        id: '88e446b3-c370-43aa-8962-c0dc316c298f' as ArtistId,
+        name: 'Taylor Swift',
+        role: 'primary',
+      },
+    ],
     writers: [
       {
         id: '88e446b3-c370-43aa-8962-c0dc316c298f' as WriterId,
@@ -184,10 +190,13 @@ export const SONGS: Song[] = [
   {
     id: 'e3b26335-32d2-46ab-9cbb-8c0a7b868008' as SongId,
     name: 'I\'d Lie',
-    artist: {
-      id: '88e446b3-c370-43aa-8962-c0dc316c298f' as ArtistId,
-      name: 'Taylor Swift',
-    },
+    artists: [
+      {
+        id: '88e446b3-c370-43aa-8962-c0dc316c298f' as ArtistId,
+        name: 'Taylor Swift',
+        role: 'primary',
+      },
+    ],
     writers: [
       {
         id: '88e446b3-c370-43aa-8962-c0dc316c298f' as WriterId,
@@ -196,5 +205,71 @@ export const SONGS: Song[] = [
     ],
     album: null,
     year: 2006,
+  },
+  {
+    id: '17c5822a-1287-4572-9056-0b723895d6fa' as SongId,
+    name: 'End Game',
+    artists: [
+      {
+        id: '88e446b3-c370-43aa-8962-c0dc316c298f' as ArtistId,
+        name: 'Taylor Swift',
+        role: 'primary',
+      },
+      {
+        id: 'bacef539-b1f7-4a07-be68-3910205f6cc9' as ArtistId,
+        name: 'Ed Sheeran',
+        role: 'featuring',
+      },
+      {
+        id: '6b4cd3b1-3d4e-4df8-aa80-abe127a21147' as ArtistId,
+        name: 'Future',
+        role: 'featuring',
+      },
+    ],
+    writers: [
+      {
+        id: '88e446b3-c370-43aa-8962-c0dc316c298f' as WriterId,
+        name: 'Taylor Swift',
+      },
+      // ...
+    ],
+    album: {
+      id: 'cfc2eea7-20c5-4136-b641-2dbc6c5f3162' as AlbumId,
+      name: 'Reputation',
+    },
+    year: 2017,
+  },
+  {
+    id: 'cf065dae-78c9-42bc-97a7-6a4be9e16566' as SongId,
+    name: 'Highway Don\'t Care',
+    artists: [
+      {
+        id: '2c62e6f6-2ffb-471a-a4e8-40a5f2f7866b' as ArtistId,
+        name: 'Tim McGraw',
+        role: 'primary',
+      },
+      {
+        id: '88e446b3-c370-43aa-8962-c0dc316c298f' as ArtistId,
+        name: 'Taylor Swift',
+        role: 'primary',
+      },
+      {
+        id: '7b64f4a1-761d-4cbe-b58d-a73128ed175c' as ArtistId,
+        name: 'Keith Urban',
+        role: 'featuring',
+      },
+    ],
+    writers: [
+      {
+        id: 'd9cd1b6a-cf99-4db1-be53-43e9534aad58' as WriterId,
+        name: 'Mark Irwin',
+      },
+      // ...
+    ],
+    album: {
+      id: 'ee0ffc0c-952d-4ad4-a991-44c8cbe07317' as AlbumId,
+      name: 'Two Lanes of Freedom',
+    },
+    year: 2013,
   },
 ]
