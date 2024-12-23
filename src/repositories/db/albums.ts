@@ -6,6 +6,7 @@ import type { AlbumRepository } from '@/repositories/albums'
 import type { ListAlbumsParam, ListAlbums, Id, Album, AlbumIn } from '@/types/albums'
 
 import { albums } from '@/db/schemas'
+import { getOrderBy } from '@/utils'
 
 export class DbAlbumRepository implements AlbumRepository {
   private db: NodePgDatabase
@@ -15,11 +16,13 @@ export class DbAlbumRepository implements AlbumRepository {
   }
 
   async list(param: ListAlbumsParam): Promise<ListAlbums> {
+    // @ts-expect-error not typed well
+    const orderByFields = getOrderBy(albums, param.sort ?? 'name')
     const results = await this.db
       .select()
       .from(albums)
       .where(like(albums.name, `%${param.q}%`))
-      .orderBy(albums.name)
+      .orderBy(...orderByFields) // multiple fields
       .limit(param.limit)
       .offset(param.offset)
     console.log(results)
