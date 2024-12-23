@@ -1,9 +1,9 @@
 import { z } from '@hono/zod-openapi'
 
-import { Album, Id as AlbumId } from '@/schemas/albums'
-import { Artist, Id as ArtistId } from '@/schemas/artists'
+import { Id as AlbumId, Album } from '@/schemas/albums'
+import { Id as ArtistId, Artist } from '@/schemas/artists'
 import { Meta } from '@/schemas/common'
-import { Writer, Id as WriterId } from '@/schemas/writers'
+import { Id as WriterId, Writer } from '@/schemas/writers'
 
 export const Id = z
   .string().uuid().brand<'SongId'>().openapi({
