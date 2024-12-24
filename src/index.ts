@@ -5,10 +5,12 @@ import { HTTPException } from 'hono/http-exception'
 import type { Errors as ErrorsType } from '@/types/common'
 
 import { listAlbums, getAlbum, createAlbum } from '@/controllers/albums'
+import { rank } from '@/controllers/ranking'
 import { listSongs, getSong, createSong } from '@/controllers/songs'
 import { GET, POST } from '@/routers'
 import { ListAlbumsParam, ListAlbums, AlbumIdInPath, Album, AlbumIn, CreatedAlbumId } from '@/schemas/albums'
 import { Errors } from '@/schemas/errors'
+import { RankingParam, Ranking } from '@/schemas/ranking'
 import { ListSongsParam, ListSongs, SongIdInPath, Song, SongIn, CreatedSongId } from '@/schemas/songs'
 import { formatZodErrors } from '@/utils'
 
@@ -94,6 +96,14 @@ app.openapi(POST('/songs',
     500: { content: { [JSON]: { schema: Errors } }, description: 'Cannot save' },
   },
 ), createSong)
+
+app.openapi(GET('/ranking',
+  { query: RankingParam },
+  {
+    200: { content: { [JSON]: { schema: Ranking } }, description: 'Successful response' },
+    422: { content: { [JSON]: { schema: Errors } }, description: 'Validation error' },
+  },
+), rank)
 
 app.doc('/openapi.json', (c) => ({
   info: {
