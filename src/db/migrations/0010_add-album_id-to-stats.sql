@@ -1,0 +1,2 @@
+ALTER TABLE "stats" ADD COLUMN "album_id" integer;--> statement-breakpoint
+ALTER TABLE "stats" ADD CONSTRAINT "stats_album_id_albums_id_fk" FOREIGN KEY ("album_id") REFERENCES "public"."albums"("id") ON DELETE no action ON UPDATE no action;

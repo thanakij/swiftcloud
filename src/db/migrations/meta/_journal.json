@@ -71,6 +71,20 @@
       "when": 1735047969812,
       "tag": "0009_seed-song_writers",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1735069727646,
+      "tag": "0010_add-album_id-to-stats",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1735069749411,
+      "tag": "0011_update-album_id",
+      "breakpoints": true
     }
   ]
 }
