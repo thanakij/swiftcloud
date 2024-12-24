@@ -4,20 +4,20 @@ import { HTTPException } from 'hono/http-exception'
 
 import type { ListSongsParam, Id, SongIn } from '@/types/songs'
 
-import { SongFactory } from '@/repositories/songs'
+import { SongRepositoryFactory } from '@/repositories/songs'
 
 export async function listSongs(c: Context) {
   // @ts-expect-error not typed well
   const query: ListSongsParam = c.req.valid('query')
   console.log(query)
-  const songRepository = SongFactory.newInstance(c)
+  const songRepository = SongRepositoryFactory.newInstance(c)
   return c.json(await songRepository.list(query), 200)
 }
 
 export async function getSong(c: Context) {
   const id = c.req.param('id') as Id
   console.log(id)
-  const songRepository = SongFactory.newInstance(c)
+  const songRepository = SongRepositoryFactory.newInstance(c)
   const song = await songRepository.get(id)
   if (!song) throw new HTTPException(404, { message: 'Song not found' })
   return c.json(song, 200)
@@ -27,7 +27,7 @@ export async function createSong(c: Context) {
   // @ts-expect-error not typed well
   const song : SongIn = c.req.valid('json')
   console.log(song)
-  const songRepository = SongFactory.newInstance(c)
+  const songRepository = SongRepositoryFactory.newInstance(c)
   try {
     const id = await songRepository.create(song)
     return c.json({ id }, 201, { Location: `/songs/${id}` })

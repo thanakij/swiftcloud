@@ -14,7 +14,7 @@ export interface AlbumRepository {
   create: (input: AlbumIn) => Promise<Id>
 }
 
-export class AlbumFactory {
+export class AlbumRepositoryFactory {
   public static newInstance(c: Context): AlbumRepository {
     const { DB_HOST, DB_USER, DB_PASS, DB_NAME, DEBUG } = env<{
       DB_HOST: string,

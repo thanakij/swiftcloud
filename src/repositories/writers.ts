@@ -12,7 +12,7 @@ export interface WriterRepository {
   get: (id: Id) => Promise<Writer | null>
 }
 
-export class WriterFactory {
+export class WriterRepositoryFactory {
   public static newInstance(c: Context): WriterRepository {
     const { DB_HOST, DB_USER, DB_PASS, DB_NAME, DEBUG } = env<{
       DB_HOST: string,

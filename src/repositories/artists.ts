@@ -12,7 +12,7 @@ export interface ArtistRepository {
   get: (id: Id) => Promise<Artist | null>
 }
 
-export class ArtistFactory {
+export class ArtistRepositoryFactory {
   public static newInstance(c: Context): ArtistRepository {
     const { DB_HOST, DB_USER, DB_PASS, DB_NAME, DEBUG } = env<{
       DB_HOST: string,

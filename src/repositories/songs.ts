@@ -17,7 +17,7 @@ export interface SongRepository {
   create: (input: SongIn) => Promise<Id>
 }
 
-export class SongFactory {
+export class SongRepositoryFactory {
   public static newInstance(c: Context): SongRepository {
     const { DB_HOST, DB_USER, DB_PASS, DB_NAME, DEBUG } = env<{
       DB_HOST: string,
