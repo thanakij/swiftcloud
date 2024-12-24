@@ -1,16 +1,18 @@
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
-import { count, eq, ilike } from 'drizzle-orm'
+import { and, count, eq, ilike } from 'drizzle-orm'
 
+import type { AlbumDB } from '@/db/types'
 import type { AlbumRepository } from '@/repositories/albums'
 import type { ArtistRepository } from '@/repositories/artists'
 import type { SongRepository } from '@/repositories/songs'
 import type { WriterRepository } from '@/repositories/writers'
-import type { Album } from '@/types/albums'
+import type { Id as AlbumId, Album } from '@/types/albums'
 import type { ListSongsParam, ListSongs, ArtistWithRole, Id, Song, SongIn } from '@/types/songs'
 import type { Writer } from '@/types/writers'
 
 import { songs } from '@/db/schemas'
+import { DbAlbumRepository } from '@/repositories/db/albums'
 import { getOrderBy } from '@/utils'
 
 export class DbSongRepository implements SongRepository {
@@ -32,24 +34,40 @@ export class DbSongRepository implements SongRepository {
   }
 
   async list(param: ListSongsParam): Promise<ListSongs> {
-    const filters = param.q ? ilike(songs.name, `%${param.q}%`) : undefined
+    const filters = param.q ? [ilike(songs.name, `%${param.q}%`)] : []
+    if (param.album_id) {
+      if (this.albumRepository instanceof DbAlbumRepository) {
+        const album = await this.albumRepository._getByUuid(param.album_id)
+        if (!album) throw new Error('Album not found')
+        filters.push(eq(songs.album_id, album.id))
+      }
+    }
+    if (param.year) filters.push(eq(songs.released_year, param.year))
     // @ts-expect-error not typed well
     const orderByFields = getOrderBy(songs, param.sort ?? 'name')
     const results = await this.db
       .select()
       .from(songs)
-      .where(filters)
+      .where(and(...filters))
       .orderBy(...orderByFields) // multiple fields
       .limit(param.limit)
       .offset(param.offset)
-    console.log(results)
-    const data: Song[] = results.map((each) => {
+    const data: Song[] = await Promise.all(results.map(async (each) => {
       const artists: ArtistWithRole[] = []
       const writers: Writer[] = []
-      const album: Album | null = null
-      return { id: each.uuid as Id, name: each.name, artists, writers, album, year: each.released_year }
-    })
-    const result = await this.db.select({ total: count() }).from(songs).where(filters)
+      const album: AlbumDB | null = each.album_id && this.albumRepository instanceof DbAlbumRepository
+        ? await this.albumRepository._get(each.album_id)
+        : null
+      return {
+        id: each.uuid as Id,
+        name: each.name,
+        artists,
+        writers,
+        album: album ? { id: album.uuid as AlbumId, name: album.name } : null,
+        year: each.released_year,
+      }
+    }))
+    const result = await this.db.select({ total: count() }).from(songs).where(and(...filters))
     const total = result[0].total
     return { meta: { total, count: data.length }, data }
   }
