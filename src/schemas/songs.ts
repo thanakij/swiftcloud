@@ -18,16 +18,16 @@ export const SongId = z
 export const ListSongsParam = z
   .object({
     q: z.string().nullable().optional().default(null).openapi({
-      example: 'Song\'s name LIKE <q>',
+      example: 'Song\'s name LIKE <q>', // search via name
     }),
-    album_id: AlbumId.nullable().optional().default(null),
+    album_id: AlbumId.nullable().optional().default(null), // filter by album
     year: z.coerce.number().nullable().optional().default(null).openapi({
-      example: 2020,
+      example: 2020, // filter by released year
     }),
     offset: z.coerce.number().optional().default(0),
     limit: z.coerce.number().optional().default(10),
     sort: z.string().nullable().optional().default(null).openapi({
-      example: 'name',
+      example: 'name', // 'name,-created_at' = name ASC, then created_at DESC
     }),
   })
   .openapi('ListSongsParam')
@@ -47,7 +47,7 @@ export const ArtistRole = z
 
 export const ArtistWithRole = Artist.extend({
   role: ArtistRole,
-})
+}).openapi('ArtistWithRole')
 
 export const Song = z
   .object({

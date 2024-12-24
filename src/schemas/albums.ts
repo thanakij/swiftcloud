@@ -15,12 +15,12 @@ export const AlbumId = z
 export const ListAlbumsParam = z
   .object({
     q: z.string().nullable().optional().default(null).openapi({
-      example: 'Album\'s name LIKE <q>',
+      example: 'Album\'s name LIKE <q>', // search via name
     }),
     offset: z.coerce.number().optional().default(0),
     limit: z.coerce.number().optional().default(10),
     sort: z.string().nullable().optional().default(null).openapi({
-      example: 'name',
+      example: 'name', // 'name,-created_at' = name ASC, then created_at DESC
     }),
   })
   .openapi('ListAlbumsParam')
