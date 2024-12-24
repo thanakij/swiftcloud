@@ -40,8 +40,8 @@ export const artistRole = pgEnum('artistRole', ['primary', 'featuring'])
 
 export const songArtists = pgTable('song_artists', {
   id: serial().primaryKey(),
-  song_id: integer().references(() => songs.id),
-  artist_id: integer().references(() => artists.id),
+  song_id: integer().notNull().references(() => songs.id),
+  artist_id: integer().notNull().references(() => artists.id),
   role: artistRole().notNull().default('primary'),
   sort_order: integer().notNull(),
   created_at: timestamp().notNull().defaultNow(),
@@ -53,8 +53,8 @@ export const songArtists = pgTable('song_artists', {
 
 export const songWriters = pgTable('song_writers', {
   id: serial().primaryKey(),
-  song_id: integer().references(() => songs.id),
-  writer_id: integer().references(() => writers.id),
+  song_id: integer().notNull().references(() => songs.id),
+  writer_id: integer().notNull().references(() => writers.id),
   sort_order: integer().notNull(),
   created_at: timestamp().notNull().defaultNow(),
 }, (t) => {
@@ -65,7 +65,7 @@ export const songWriters = pgTable('song_writers', {
 
 export const stats = pgTable('stats', {
   id: serial().primaryKey(),
-  song_id: integer().references(() => songs.id),
+  song_id: integer().notNull().references(() => songs.id),
   year: integer().notNull(),
   month: integer().notNull(),
   plays: integer().notNull(),

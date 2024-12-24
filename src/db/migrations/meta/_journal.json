@@ -15,6 +15,13 @@
       "when": 1734970625952,
       "tag": "0001_released_year_is_not_null",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1735019856576,
+      "tag": "0002_song_id_is_not_null",
+      "breakpoints": true
     }
   ]
 }
