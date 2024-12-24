@@ -57,6 +57,13 @@
       "when": 1735039768845,
       "tag": "0007_seed-stats",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1735047037820,
+      "tag": "0008_seed-song_artists",
+      "breakpoints": true
     }
   ]
 }
