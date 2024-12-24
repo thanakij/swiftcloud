@@ -18,64 +18,43 @@ import { MockSongRepository } from '@/repositories/mock/songs'
 import { MockStatRepository } from '@/repositories/mock/stats'
 import { MockWriterRepository } from '@/repositories/mock/writers'
 
+function getDB(env: Env) {
+  const { DB_HOST, DB_USER, DB_PASS, DB_NAME, DEBUG } = env
+  const DATABASE_URL = `postgresql://${DB_USER ?? 'postgres'}:${DB_PASS}@${DB_HOST ?? 'localhost'}:5432/${DB_NAME}`
+  return drizzle({ connection: DATABASE_URL, logger: ['true', '1'].includes(DEBUG ?? '') })
+}
+
 export class RepositoryFactory {
   public static newArtistRepository(env: Env): ArtistRepository {
-    const { DB_HOST, DB_USER, DB_PASS, DB_NAME, DEBUG } = env
-    // mock
-    if (!DB_PASS) return new MockArtistRepository()
-    // database
-    const DATABASE_URL = `postgresql://${DB_USER}:${DB_PASS}@${DB_HOST ?? 'localhost'}:5432/${DB_NAME}`
-    const db = drizzle({ connection: DATABASE_URL, logger: ['true', '1'].includes(DEBUG ?? '') })
-    return new DbArtistRepository(db)
+    return env.DB_PASS && env.DB_NAME ? new DbArtistRepository(getDB(env)) : new MockArtistRepository
   }
 
   public static newWriterRepository(env: Env): WriterRepository {
-    const { DB_HOST, DB_USER, DB_PASS, DB_NAME, DEBUG } = env
-    // mock
-    if (!DB_PASS) return new MockWriterRepository()
-    // database
-    const DATABASE_URL = `postgresql://${DB_USER}:${DB_PASS}@${DB_HOST ?? 'localhost'}:5432/${DB_NAME}`
-    const db = drizzle({ connection: DATABASE_URL, logger: ['true', '1'].includes(DEBUG ?? '') })
-    return new DbWriterRepository(db)
+    return env.DB_PASS && env.DB_NAME ? new DbWriterRepository(getDB(env)) : new MockWriterRepository
   }
 
   public static newAlbumRepository(env: Env): AlbumRepository {
-    const { DB_HOST, DB_USER, DB_PASS, DB_NAME, DEBUG } = env
-    // mock
-    if (!DB_PASS) return new MockAlbumRepository()
-    // database
-    const DATABASE_URL = `postgresql://${DB_USER}:${DB_PASS}@${DB_HOST ?? 'localhost'}:5432/${DB_NAME}`
-    const db = drizzle({ connection: DATABASE_URL, logger: ['true', '1'].includes(DEBUG ?? '') })
-    return new DbAlbumRepository(db)
+    return env.DB_PASS && env.DB_NAME ? new DbAlbumRepository(getDB(env)) : new MockAlbumRepository
   }
 
   public static newSongRepository(env: Env): SongRepository {
-    const { DB_HOST, DB_USER, DB_PASS, DB_NAME, DEBUG } = env
-    if (!DB_PASS) {
-      const albumRepository = new MockAlbumRepository()
-      const artistRepository = new MockArtistRepository()
-      const writerRepository = new MockWriterRepository()
-      return new MockSongRepository(albumRepository, artistRepository, writerRepository)
+    if (env.DB_PASS && env.DB_NAME) {
+      return new DbSongRepository(getDB(env))
     }
-    // database
-    const DATABASE_URL = `postgresql://${DB_USER}:${DB_PASS}@${DB_HOST ?? 'localhost'}:5432/${DB_NAME}`
-    const db = drizzle({ connection: DATABASE_URL, logger: ['true', '1'].includes(DEBUG ?? '') })
-    return new DbSongRepository(db)
+    const albumRepository = new MockAlbumRepository()
+    const artistRepository = new MockArtistRepository()
+    const writerRepository = new MockWriterRepository()
+    return new MockSongRepository(albumRepository, artistRepository, writerRepository)
   }
 
   public static newStatRepository(env: Env): StatRepository {
-    const { DB_HOST, DB_USER, DB_PASS, DB_NAME, DEBUG } = env
-    // mock
-    if (!DB_PASS) {
-      const albumRepository = new MockAlbumRepository()
-      const artistRepository = new MockArtistRepository()
-      const writerRepository = new MockWriterRepository()
-      const songRepository = new MockSongRepository(albumRepository, artistRepository, writerRepository)
-      return new MockStatRepository(songRepository, albumRepository)
+    if (env.DB_PASS && env.DB_NAME) {
+      return new DbStatRepository(getDB(env))
     }
-    // database
-    const DATABASE_URL = `postgresql://${DB_USER}:${DB_PASS}@${DB_HOST ?? 'localhost'}:5432/${DB_NAME}`
-    const db = drizzle({ connection: DATABASE_URL, logger: ['true', '1'].includes(DEBUG ?? '') })
-    return new DbStatRepository(db)
+    const albumRepository = new MockAlbumRepository()
+    const artistRepository = new MockArtistRepository()
+    const writerRepository = new MockWriterRepository()
+    const songRepository = new MockSongRepository(albumRepository, artistRepository, writerRepository)
+    return new MockStatRepository(songRepository, albumRepository)
   }
 }
