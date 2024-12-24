@@ -22,7 +22,8 @@ export function formatZodErrors(error: ZodError): string[] {
 type SchemaType = Record<string, Column>
 type SortedField = ReturnType<typeof desc>
 
-export function getOrderBy(schema: SchemaType, sort: string): SortedField[] {
+export function getOrderBy(schema: SchemaType, sort: string | null): SortedField[] {
+  if (!sort) return [asc(schema['id'])] // default is to sort by 'id' column
   const sortFields: SortedField[] = []
   for (const each of sort.split(',')) {
     if (!each) continue
