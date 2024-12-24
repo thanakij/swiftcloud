@@ -5,3 +5,7 @@ import {
 } from '@/schemas/errors'
 
 export type Errors  = z.infer<typeof _Errors>
+
+export interface Env {
+  [key: string]: string | undefined;
+}
