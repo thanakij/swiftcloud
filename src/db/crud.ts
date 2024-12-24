@@ -107,8 +107,19 @@ export async function insertAlbum(db: NodePgDatabase, obj: NewAlbumDB): Promise<
   return records.length > 0 ? records[0] : null
 }
 
-export async function countSongs(db: NodePgDatabase, q: string | null): Promise<number> {
+export async function countSongs(
+  db: NodePgDatabase,
+  q: string | null,
+  album_uuid: string | null,
+  year: number | null,
+): Promise<number> {
   const filters = q ? [ilike(songs.name, `%${q}%`)] : []
+  if (album_uuid) {
+    const album = await getAlbumByUuid(db, album_uuid)
+    if (!album) throw new Error('Album not found')
+    filters.push(eq(songs.album_id, album.id))
+  }
+  if (year) filters.push(eq(songs.released_year, year))
   const record = await db.select({ n: count() }).from(songs).where(and(...filters))
   return record[0].n
 }

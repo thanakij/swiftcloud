@@ -44,7 +44,7 @@ export class DbSongRepository implements SongRepository {
       const album = each.album_id ? albumsMap[each.album_id] : null
       return mapSong(each, artists, writers, album)
     })
-    const total = await countSongs(this.db, param.q)
+    const total = await countSongs(this.db, param.q, param.album_id, param.year)
     return { meta: { total, count: data.length }, data }
   }
 
