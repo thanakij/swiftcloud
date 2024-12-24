@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm'
-import { pgTable, serial, uuid, varchar, timestamp, integer, check, unique, pgEnum } from 'drizzle-orm/pg-core'
+import { pgTable, serial, uuid, varchar, timestamp, integer, check, unique, index, pgEnum } from 'drizzle-orm/pg-core'
 
 export const artists = pgTable('artists', {
   id: serial().primaryKey(),
@@ -75,5 +75,6 @@ export const stats = pgTable('stats', {
   return {
     unq: unique().on(t.song_id, t.year, t.month),
     check: check('month', sql`${t.month} >= 1 AND ${t.month} <= 12`),
+    album_idx: index('stats_album_idx').on(t.album_id, t.plays),
   }
 })

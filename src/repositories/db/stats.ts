@@ -1,6 +1,5 @@
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
-import type { AlbumDB, SongDB } from '@/db/types'
 import type { StatRepository } from '@/repositories/stats'
 import type { RankingParam, DataWithStat, Ranking } from '@/types/ranking'
 

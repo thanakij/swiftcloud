@@ -1,0 +1,1 @@
+CREATE INDEX "stats_album_idx" ON "stats" USING btree ("album_id","plays");

@@ -85,6 +85,13 @@
       "when": 1735069749411,
       "tag": "0011_update-album_id",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1735078776432,
+      "tag": "0012_add-composite-index-on-album_id-plays",
+      "breakpoints": true
     }
   ]
 }
