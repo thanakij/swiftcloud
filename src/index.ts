@@ -7,9 +7,9 @@ import type { Errors as ErrorsType } from '@/types/common'
 import { listAlbums, getAlbum, createAlbum } from '@/controllers/albums'
 import { listSongs, getSong, createSong } from '@/controllers/songs'
 import { GET, POST } from '@/routers'
-import { ListAlbumsParam, ListAlbums, GetAlbumParam, Album, AlbumIn, AlbumId } from '@/schemas/albums'
+import { ListAlbumsParam, ListAlbums, AlbumIdInPath, Album, AlbumIn, AlbumId } from '@/schemas/albums'
 import { Errors } from '@/schemas/errors'
-import { ListSongsParam, ListSongs, GetSongParam, Song, SongIn, SongId } from '@/schemas/songs'
+import { ListSongsParam, ListSongs, SongIdInPath, Song, SongIn, SongId } from '@/schemas/songs'
 import { formatZodErrors } from '@/utils'
 
 const JSON = 'application/json'
@@ -50,7 +50,7 @@ app.openapi(GET('/albums',
 ), listAlbums)
 
 app.openapi(GET('/albums/{id}',
-  { params: GetAlbumParam },
+  { params: AlbumIdInPath },
   {
     200: { content: { [JSON]: { schema: Album } }, description: 'Successful response' },
     404: { content: { [JSON]: { schema: Errors } }, description: 'Not found' },
@@ -77,7 +77,7 @@ app.openapi(GET('/songs',
 ), listSongs)
 
 app.openapi(GET('/songs/{id}',
-  { params: GetSongParam },
+  { params: SongIdInPath },
   {
     200: { content: { [JSON]: { schema: Song } }, description: 'Successful response' },
     404: { content: { [JSON]: { schema: Errors } }, description: 'Not found' },

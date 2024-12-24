@@ -32,7 +32,7 @@ export const ListSongsParam = z
   })
   .openapi('ListSongsParam')
 
-export const GetSongParam = z
+export const SongIdInPath = z
   .object({
     id: z.string().uuid().openapi({
       param: { name: 'id', in: 'path' },

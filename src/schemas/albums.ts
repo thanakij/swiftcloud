@@ -25,7 +25,7 @@ export const ListAlbumsParam = z
   })
   .openapi('ListAlbumsParam')
 
-export const GetAlbumParam = z
+export const AlbumIdInPath = z
   .object({
     id: z.string().uuid().openapi({
       param: { name: 'id', in: 'path' },
