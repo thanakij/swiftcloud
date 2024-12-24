@@ -2,21 +2,13 @@ import { z } from '@hono/zod-openapi'
 
 import { Meta } from '@/schemas/common'
 
-export const Id = z
-  .string().uuid().brand<'AlbumId'>().openapi({
-    example: 'aeb1e256-9e86-4bd1-899b-93c1fd8b55e9',
-  })
+export const Id = z.string().uuid().brand<'AlbumId'>()
 
-export const AlbumId = z
-  .object({
-    id: Id,
-  })
+export const AlbumId = z.object({ id: Id })
 
 export const ListAlbumsParam = z
   .object({
-    q: z.string().nullable().optional().default(null).openapi({
-      example: 'Album\'s name LIKE <q>', // search via name
-    }),
+    q: z.string().nullable().optional().default(null), // search names using ILIKE
     offset: z.coerce.number().optional().default(0),
     limit: z.coerce.number().optional().default(10),
     sort: z.string().nullable().optional().default(null).openapi({
@@ -29,7 +21,6 @@ export const AlbumIdInPath = z
   .object({
     id: z.string().uuid().openapi({
       param: { name: 'id', in: 'path' },
-      example: 'aeb1e256-9e86-4bd1-899b-93c1fd8b55e9',
     }),
   })
 

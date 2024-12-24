@@ -5,21 +5,13 @@ import { Id as ArtistId, Artist } from '@/schemas/artists'
 import { Meta } from '@/schemas/common'
 import { Id as WriterId, Writer } from '@/schemas/writers'
 
-export const Id = z
-  .string().uuid().brand<'SongId'>().openapi({
-    example: '9635afbd-4956-4633-b03a-ada3b243d47e',
-  })
+export const Id = z.string().uuid().brand<'SongId'>()
 
-export const SongId = z
-  .object({
-    id: Id,
-  })
+export const SongId = z.object({ id: Id })
 
 export const ListSongsParam = z
   .object({
-    q: z.string().nullable().optional().default(null).openapi({
-      example: 'Song\'s name LIKE <q>', // search via name
-    }),
+    q: z.string().nullable().optional().default(null), // search names using ILIKE
     album_id: AlbumId.nullable().optional().default(null), // filter by album
     year: z.coerce.number().nullable().optional().default(null), // filter by released year
     offset: z.coerce.number().optional().default(0),
@@ -36,7 +28,6 @@ export const SongIdInPath = z
   .object({
     id: z.string().uuid().openapi({
       param: { name: 'id', in: 'path' },
-      example: '9635afbd-4956-4633-b03a-ada3b243d47e',
     }),
   })
 
