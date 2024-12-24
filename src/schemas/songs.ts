@@ -21,13 +21,13 @@ export const ListSongsParam = z
       example: 'Song\'s name LIKE <q>', // search via name
     }),
     album_id: AlbumId.nullable().optional().default(null), // filter by album
-    year: z.coerce.number().nullable().optional().default(null).openapi({
-      example: 2020, // filter by released year
-    }),
+    year: z.coerce.number().nullable().optional().default(null), // filter by released year
     offset: z.coerce.number().optional().default(0),
     limit: z.coerce.number().optional().default(10),
     sort: z.string().nullable().optional().default(null).openapi({
-      example: 'name', // 'name,-created_at' = name ASC, then created_at DESC
+      // '-year,name' = released year DESC, then name ASC
+      // '-plays' = all-time plays DESC
+      example: '-year,name',
     }),
   })
   .openapi('ListSongsParam')

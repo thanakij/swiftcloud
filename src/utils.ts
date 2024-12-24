@@ -22,13 +22,15 @@ export function formatZodErrors(error: ZodError): string[] {
 type SchemaType = Record<string, Column>
 type SortedField = ReturnType<typeof desc>
 
-export function getOrderBy(schema: SchemaType, sort: string | null): SortedField[] {
+export function getOrderBy(schema: SchemaType, sort: string | null, columnMap: Record<string, string>): SortedField[] {
   if (!sort) return [asc(schema['id'])] // default is to sort by 'id' column
   const sortFields: SortedField[] = []
   for (const each of sort.split(',')) {
     if (!each) continue
     const f = each[0] === '-' ? desc : asc
-    sortFields.push(f(schema[each.replace('-', '')]))
+    const key = each.replace('-', '').trim()
+    if (!key || !(key in columnMap)) continue
+    sortFields.push(f(schema[columnMap[key]]))
   }
   return sortFields
 }

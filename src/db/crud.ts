@@ -67,7 +67,12 @@ export async function listAlbums(
 ): Promise<AlbumDB[]> {
   const filters = q ? [ilike(albums.name, `%${q}%`)] : []
   // @ts-expect-error not typed well
-  const sorting = getOrderBy(albums, sort ?? 'name')
+  const sorting = getOrderBy(albums, sort ?? 'name', {
+    id: 'id',
+    name: 'name',
+    created_at: 'created_at',
+    updated_at: 'updated_at',
+  })
   return await db
     .select()
     .from(albums)
@@ -141,7 +146,14 @@ export async function listSongs(
   }
   if (year) filters.push(eq(songs.released_year, year))
   // @ts-expect-error not typed well
-  const sorting = getOrderBy(songs, sort ?? 'name')
+  const sorting = getOrderBy(songs, sort ?? 'name', {
+    id: 'id',
+    name: 'name',
+    year: 'released_year',
+    plays: 'total_plays',
+    created_at: 'created_at',
+    updated_at: 'updated_at',
+  })
   return await db
     .select()
     .from(songs)
