@@ -7,8 +7,6 @@ import { Id as WriterId, Writer } from '@/schemas/writers'
 
 export const Id = z.string().uuid().brand<'SongId'>()
 
-export const SongId = z.object({ id: Id })
-
 export const ListSongsParam = z
   .object({
     q: z.string().nullable().optional().default(null), // search names using ILIKE
@@ -76,3 +74,5 @@ export const ListSongs = z
     data: z.array(Song),
   })
   .openapi('ListSongs')
+
+export const CreatedSongId = z.object({ id: Id }).openapi('CreatedSongId')

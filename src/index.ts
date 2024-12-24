@@ -7,9 +7,9 @@ import type { Errors as ErrorsType } from '@/types/common'
 import { listAlbums, getAlbum, createAlbum } from '@/controllers/albums'
 import { listSongs, getSong, createSong } from '@/controllers/songs'
 import { GET, POST } from '@/routers'
-import { ListAlbumsParam, ListAlbums, AlbumIdInPath, Album, AlbumIn, AlbumId } from '@/schemas/albums'
+import { ListAlbumsParam, ListAlbums, AlbumIdInPath, Album, AlbumIn, CreatedAlbumId } from '@/schemas/albums'
 import { Errors } from '@/schemas/errors'
-import { ListSongsParam, ListSongs, SongIdInPath, Song, SongIn, SongId } from '@/schemas/songs'
+import { ListSongsParam, ListSongs, SongIdInPath, Song, SongIn, CreatedSongId } from '@/schemas/songs'
 import { formatZodErrors } from '@/utils'
 
 const JSON = 'application/json'
@@ -61,7 +61,7 @@ app.openapi(GET('/albums/{id}',
 app.openapi(POST('/albums',
   { body: { content: { [JSON]: { schema: AlbumIn } } } },
   {
-    201: { content: { [JSON]: { schema: AlbumId } }, description: 'Successful response' },
+    201: { content: { [JSON]: { schema: CreatedAlbumId } }, description: 'Successful response' },
     404: { content: { [JSON]: { schema: Errors } }, description: 'Not found' },
     422: { content: { [JSON]: { schema: Errors } }, description: 'Validation error' },
     500: { content: { [JSON]: { schema: Errors } }, description: 'Cannot save' },
@@ -88,7 +88,7 @@ app.openapi(GET('/songs/{id}',
 app.openapi(POST('/songs',
   { body: { content: { [JSON]: { schema: SongIn } } } },
   {
-    201: { content: { [JSON]: { schema: SongId } }, description: 'Successful response' },
+    201: { content: { [JSON]: { schema: CreatedSongId } }, description: 'Successful response' },
     404: { content: { [JSON]: { schema: Errors } }, description: 'Not found' },
     422: { content: { [JSON]: { schema: Errors } }, description: 'Validation error' },
     500: { content: { [JSON]: { schema: Errors } }, description: 'Cannot save' },

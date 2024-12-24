@@ -4,8 +4,6 @@ import { Meta } from '@/schemas/common'
 
 export const Id = z.string().uuid().brand<'AlbumId'>()
 
-export const AlbumId = z.object({ id: Id })
-
 export const ListAlbumsParam = z
   .object({
     q: z.string().nullable().optional().default(null), // search names using ILIKE
@@ -47,3 +45,5 @@ export const ListAlbums = z
     data: z.array(Album),
   })
   .openapi('ListAlbums')
+
+export const CreatedAlbumId = z.object({ id: Id }).openapi('CreatedAlbumId')
