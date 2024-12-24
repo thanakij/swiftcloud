@@ -33,6 +33,6 @@ export async function createAlbum(c: Context) {
     return c.json({ id }, 201, { Location: `/albums/${id}` })
   } catch (e) {
     console.error(e)
-    throw new HTTPException(500, { message: 'Cannot save', cause: e })
+    throw new HTTPException(500, { message: 'Cannot create an album', cause: e })
   }
 }
