@@ -1,0 +1,25 @@
+-- Custom SQL migration file, put your code below! --
+INSERT INTO "artists" ("uuid", "name", "created_at", "updated_at") VALUES
+(gen_random_uuid(), 'Taylor Swift', now(), now()),
+(gen_random_uuid(), 'Sugarland', now(), now()),
+(gen_random_uuid(), 'Kendrick Lamar', now(), now()),
+(gen_random_uuid(), 'Kenny Chesney', now(), now()),
+(gen_random_uuid(), 'B.o.B', now(), now()),
+(gen_random_uuid(), 'Colbie Caillat', now(), now()),
+(gen_random_uuid(), 'Ed Sheeran', now(), now()),
+(gen_random_uuid(), 'Future', now(), now()),
+(gen_random_uuid(), 'Bon Iver', now(), now()),
+(gen_random_uuid(), 'John Mayer', now(), now()),
+(gen_random_uuid(), 'Tim McGraw', now(), now()),
+(gen_random_uuid(), 'Keith Urban', now(), now()),
+(gen_random_uuid(), 'Jack Ingram', now(), now()),
+(gen_random_uuid(), 'Zayn', now(), now()),
+(gen_random_uuid(), 'Gary Lightbody of Snow Patrol', now(), now()),
+(gen_random_uuid(), 'Paula Fernandes', now(), now()),
+(gen_random_uuid(), 'Shawn Mendes', now(), now()),
+(gen_random_uuid(), 'Idris Elba', now(), now()),
+(gen_random_uuid(), 'Brendon Urie of Panic! at the Disco', now(), now()),
+(gen_random_uuid(), 'The Civil Wars', now(), now()),
+(gen_random_uuid(), 'Dixie Chicks', now(), now()),
+(gen_random_uuid(), 'Boys Like Girls', now(), now())
+;
