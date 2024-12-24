@@ -21,7 +21,9 @@ export class WriterFactory {
       DB_NAME: string,
       DEBUG: string,
     }>(c)
+    // mock
     if (!DB_PASS) return new MockWriterRepository()
+    // database
     const DATABASE_URL = `postgresql://${DB_USER}:${DB_PASS}@${DB_HOST ?? 'localhost'}:5432/${DB_NAME}`
     const db = drizzle({ connection: DATABASE_URL, logger: ['true', '1'].includes(DEBUG) })
     return new DbWriterRepository(db)

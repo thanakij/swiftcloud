@@ -58,7 +58,7 @@ export class MockSongRepository implements SongRepository {
     }
     // album
     let album = null
-    if (album_id !== null) {
+    if (album_id) {
       album = await this.albumRepository.get(album_id)
       if (!album) throw new Error('Album not found')
     }

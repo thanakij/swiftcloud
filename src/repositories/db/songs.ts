@@ -1,123 +1,112 @@
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
-import { and, count, eq, ilike } from 'drizzle-orm'
-
-import type { AlbumDB } from '@/db/types'
-import type { AlbumRepository } from '@/repositories/albums'
-import type { ArtistRepository } from '@/repositories/artists'
+import type { ArtistDB, WriterDB, SongDB, NewSongArtistsDB, NewSongWritersDB } from '@/db/types'
 import type { SongRepository } from '@/repositories/songs'
-import type { WriterRepository } from '@/repositories/writers'
-import type { Id as AlbumId, Album } from '@/types/albums'
-import type { ListSongsParam, ListSongs, ArtistWithRole, Id, Song, SongIn } from '@/types/songs'
-import type { Writer } from '@/types/writers'
+import type { ListSongsParam, ListSongs, Id, Song, SongIn } from '@/types/songs'
 
-import { songs } from '@/db/schemas'
-import { DbAlbumRepository } from '@/repositories/db/albums'
-import { getOrderBy } from '@/utils'
+import {
+  countSongs,
+  listSongs,
+  getSongByUuid,
+  getSongArtistsByIds,
+  getSongWritersByIds,
+  insertSong,
+  insertSongArtists,
+  insertSongWriters,
+} from '@/db/crud'
+import { getAlbum, getAlbumByUuid, getAlbumsByIds, getArtistByUuid, getWriterByUuid } from '@/db/crud'
+import { getAlbumMap, mapSong, mapNewSongDB, getSongArtistsMap, getSongWritersMap } from '@/repositories/db/utils'
 
 export class DbSongRepository implements SongRepository {
   private db: NodePgDatabase
-  private albumRepository: AlbumRepository
-  private artistRepository: ArtistRepository
-  private writerRepository: WriterRepository
 
-  public constructor(
-    db: NodePgDatabase,
-    albumRepository: AlbumRepository,
-    artistRepository: ArtistRepository,
-    writerRepository: WriterRepository,
-  ) {
+  public constructor(db: NodePgDatabase) {
     this.db = db
-    this.albumRepository = albumRepository
-    this.artistRepository = artistRepository
-    this.writerRepository = writerRepository
   }
 
   async list(param: ListSongsParam): Promise<ListSongs> {
-    const filters = param.q ? [ilike(songs.name, `%${param.q}%`)] : []
-    if (param.album_id) {
-      if (this.albumRepository instanceof DbAlbumRepository) {
-        const album = await this.albumRepository._getByUuid(param.album_id)
-        if (!album) throw new Error('Album not found')
-        filters.push(eq(songs.album_id, album.id))
-      }
-    }
-    if (param.year) filters.push(eq(songs.released_year, param.year))
-    // @ts-expect-error not typed well
-    const orderByFields = getOrderBy(songs, param.sort ?? 'name')
-    const results = await this.db
-      .select()
-      .from(songs)
-      .where(and(...filters))
-      .orderBy(...orderByFields) // multiple fields
-      .limit(param.limit)
-      .offset(param.offset)
-    const data: Song[] = await Promise.all(results.map(async (each) => {
-      const artists: ArtistWithRole[] = []
-      const writers: Writer[] = []
-      const album: AlbumDB | null = each.album_id && this.albumRepository instanceof DbAlbumRepository
-        ? await this.albumRepository._get(each.album_id)
-        : null
-      return {
-        id: each.uuid as Id,
-        name: each.name,
-        artists,
-        writers,
-        album: album ? { id: album.uuid as AlbumId, name: album.name } : null,
-        year: each.released_year,
-      }
-    }))
-    const result = await this.db.select({ total: count() }).from(songs).where(and(...filters))
-    const total = result[0].total
+    const records = await listSongs(this.db, param.q, param.album_id, param.year, param.offset, param.limit, param.sort)
+    const songs_id = records.map((each) => each.id)
+    // artists
+    const songArtists = await getSongArtistsByIds(this.db, songs_id) // avoid N+1 query
+    const songArtistsMap = getSongArtistsMap(songArtists)
+    // writers
+    const songWriters = await getSongWritersByIds(this.db, songs_id) // avoid N+1 query
+    const songWritersMap = getSongWritersMap(songWriters)
+    // albums
+    const albums_id = records.map((each) => each.album_id).filter((each) => each !== null)
+    const albums = await getAlbumsByIds(this.db, albums_id) // avoid N+1 query
+    const albumsMap = getAlbumMap(albums)
+    // format
+    const data = records.map((each) => {
+      const artists = each.id in songArtistsMap ? songArtistsMap[each.id] : []
+      const writers = each.id in songWritersMap ? songWritersMap[each.id] : []
+      const album = each.album_id ? albumsMap[each.album_id] : null
+      return mapSong(each, artists, writers, album)
+    })
+    const total = await countSongs(this.db, param.q)
     return { meta: { total, count: data.length }, data }
   }
 
   async get(id: Id): Promise<Song | null> {
-    const results = await this.db
-      .select()
-      .from(songs)
-      .where(eq(songs.uuid, id))
-      .limit(1)
-    const data: Song[] = results.map((each) => {
-      const artists: ArtistWithRole[] = []
-      const writers: Writer[] = []
-      const album: Album | null = null
-      return { id: each.uuid as Id, name: each.name, artists, writers, album, year: each.released_year }
-    })
-    return data.length > 0 ? data[0] : null
+    const record = await getSongByUuid(this.db, id)
+    // artists
+    const songArtists = await getSongArtistsByIds(this.db, record ? [record.id] : [])
+    const songArtistsMap = getSongArtistsMap(songArtists)
+    const artists = record && (record.id in songArtistsMap) ? songArtistsMap[record.id] : []
+    // writers
+    const songWriters = await getSongWritersByIds(this.db, record ? [record.id] : [])
+    const songWritersMap = getSongWritersMap(songWriters)
+    const writers = record && (record.id in songWritersMap) ? songWritersMap[record.id] : []
+    // album
+    const album = record && record.album_id ? await getAlbum(this.db, record.album_id) : null
+    // format
+    return record ? mapSong(record, artists, writers, album) : null
   }
 
   async create(input: SongIn): Promise<Id> {
-    const { name, artists_id, artists_role, writers_id, album_id, year } = input
-    // artists
-    const artists: ArtistWithRole[] = []
-    if (artists_id) {
-      if (!artists_role || artists_role.length !== artists_id.length) {
-        throw new Error('The size of "artists_id" and "artists_role" have to match')
-      }
-      for (const [i, id] of artists_id.entries()) {
-        const artist = await this.artistRepository.get(id)
-        if (!artist) throw new Error(`Artist[${i}] not found`)
-        artists.push({ ...artist, role: artists_role[i] })
-      }
+    const { artists_id, artists_role, writers_id, album_id } = input
+    // validation
+    if (artists_id.length <= 0) throw new Error('At least one artist is required')
+    if (artists_id.length !== artists_role.length) {
+      throw new Error('The size of "artists_id" and "artists_role" have to match')
     }
-    if (artists.length <= 0) throw new Error('At least one artist is required')
+    // artists
+    const artists: ArtistDB[] = []
+    for (const [i, uuid] of artists_id.entries()) {
+      const artist = await getArtistByUuid(this.db, uuid)
+      if (!artist) throw new Error(`Artist[${i}] not found`)
+      artists.push(artist)
+    }
     // writers
-    const writers: Writer[] = []
-    if (writers_id) {
-      for (const [i, id] of writers_id.entries()) {
-        const writer = await this.writerRepository.get(id)
-        if (!writer) throw new Error(`Writer[${i}] not found`)
-        writers.push(writer)
-      }
+    const writers: WriterDB[] = []
+    for (const [i, uuid] of writers_id.entries()) {
+      const writer = await getWriterByUuid(this.db, uuid)
+      if (!writer) throw new Error(`Writer[${i}] not found`)
+      writers.push(writer)
     }
     // album
-    let album = null
-    if (album_id !== null) {
-      album = await this.albumRepository.get(album_id)
-      if (!album) throw new Error('Album not found')
-    }
-    // save a new song
-    throw new Error('Not implemented')
+    const album = album_id ? await getAlbumByUuid(this.db, album_id) : null
+    if (album_id && !album) throw new Error('Album not found')
+    // insert with a database transaction
+    const record: SongDB = await this.db.transaction(async (tx) => {
+    // a new song
+      const song = await insertSong(tx, mapNewSongDB(input, album))
+      if (!song) throw new Error('Failed insertSong()')
+      const song_id = song.id
+      // song_artists
+      const songArtists: NewSongArtistsDB[] = artists.map(
+        (each, i) => ({ song_id, artist_id: each.id, role: artists_role[i], sort_order: i }),
+      )
+      await insertSongArtists(tx, songArtists)
+      // song_writers
+      const songWriters: NewSongWritersDB[] = writers.map(
+        (each, i) => ({ song_id, writer_id: each.id, sort_order: i }),
+      )
+      await insertSongWriters(tx, songWriters)
+      return song
+    })
+    // format
+    return record.uuid as Id
   }
 }

@@ -5,10 +5,7 @@ import { env } from 'hono/adapter'
 
 import type { ListSongsParam, ListSongs, Id, Song, SongIn } from '@/types/songs'
 
-import { DbAlbumRepository } from '@/repositories/db/albums'
-import { DbArtistRepository } from '@/repositories/db/artists'
 import { DbSongRepository } from '@/repositories/db/songs'
-import { DbWriterRepository } from '@/repositories/db/writers'
 import { MockAlbumRepository } from '@/repositories/mock/albums'
 import { MockArtistRepository } from '@/repositories/mock/artists'
 import { MockSongRepository } from '@/repositories/mock/songs'
@@ -29,17 +26,16 @@ export class SongFactory {
       DB_NAME: string,
       DEBUG: string,
     }>(c)
+    // mock
     if (!DB_PASS) {
       const albumRepository = new MockAlbumRepository()
       const artistRepository = new MockArtistRepository()
       const writerRepository = new MockWriterRepository()
       return new MockSongRepository(albumRepository, artistRepository, writerRepository)
     }
+    // database
     const DATABASE_URL = `postgresql://${DB_USER}:${DB_PASS}@${DB_HOST ?? 'localhost'}:5432/${DB_NAME}`
     const db = drizzle({ connection: DATABASE_URL, logger: ['true', '1'].includes(DEBUG) })
-    const albumRepository = new DbAlbumRepository(db)
-    const artistRepository = new DbArtistRepository(db)
-    const writerRepository = new DbWriterRepository(db)
-    return new DbSongRepository(db, albumRepository, artistRepository, writerRepository)
+    return new DbSongRepository(db)
   }
 }

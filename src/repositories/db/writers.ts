@@ -1,11 +1,11 @@
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
-import { eq } from 'drizzle-orm'
-
 import type { WriterRepository } from '@/repositories/writers'
 import type { Id, Writer } from '@/types/writers'
 
-import { writers } from '@/db/schemas'
+import { getWriterByUuid } from '@/db/crud'
+
+import { mapWriter } from './utils'
 
 export class DbWriterRepository implements WriterRepository {
   private db: NodePgDatabase
@@ -15,12 +15,7 @@ export class DbWriterRepository implements WriterRepository {
   }
 
   async get(id: Id): Promise<Writer | null> {
-    const results = await this.db
-      .select()
-      .from(writers)
-      .where(eq(writers.uuid, id))
-      .limit(1)
-    const data: Writer[] = results.map((each) => ({ id: each.uuid as Id, name: each.name }))
-    return data.length > 0 ? data[0] : null
+    const record = await getWriterByUuid(this.db, id)
+    return record ? mapWriter(record) : null
   }
 }
