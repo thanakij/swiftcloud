@@ -90,7 +90,7 @@ export class DbSongRepository implements SongRepository {
     if (album_id && !album) throw new Error('Album not found')
     // insert with a database transaction
     const record: SongDB = await this.db.transaction(async (tx) => {
-    // a new song
+      // a new song
       const song = await insertSong(tx, mapNewSongDB(input, album))
       if (!song) throw new Error('Failed insertSong()')
       const song_id = song.id

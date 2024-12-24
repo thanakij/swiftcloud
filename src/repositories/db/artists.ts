@@ -4,8 +4,7 @@ import type { ArtistRepository } from '@/repositories/artists'
 import type { Id, Artist } from '@/types/artists'
 
 import { getArtistByUuid } from '@/db/crud'
-
-import { mapArtist } from './utils'
+import { mapArtist } from '@/repositories/db/utils'
 
 export class DbArtistRepository implements ArtistRepository {
   private db: NodePgDatabase

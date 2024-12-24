@@ -4,8 +4,7 @@ import type { WriterRepository } from '@/repositories/writers'
 import type { Id, Writer } from '@/types/writers'
 
 import { getWriterByUuid } from '@/db/crud'
-
-import { mapWriter } from './utils'
+import { mapWriter } from '@/repositories/db/utils'
 
 export class DbWriterRepository implements WriterRepository {
   private db: NodePgDatabase
