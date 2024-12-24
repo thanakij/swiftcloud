@@ -66,6 +66,7 @@ export const songWriters = pgTable('song_writers', {
 export const stats = pgTable('stats', {
   id: serial().primaryKey(),
   song_id: integer().notNull().references(() => songs.id),
+  album_id: integer().references(() => albums.id),
   year: integer().notNull(),
   month: integer().notNull(),
   plays: integer().notNull(),
