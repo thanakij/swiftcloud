@@ -23,3 +23,8 @@ export interface SongWritersWithDataDB {
 }
 
 export type ArtistWithRoleDB = ArtistDB & Pick<SongArtistsDB, 'role'>
+
+export interface RankingDB {
+  id: number;
+  n: number;
+}

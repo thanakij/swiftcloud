@@ -2,7 +2,7 @@ import { z } from '@hono/zod-openapi'
 
 import { Album } from '@/schemas/albums'
 import { Meta } from '@/schemas/common'
-import { Song } from '@/schemas/songs'
+import { SongBase } from '@/schemas/songs'
 
 export const GroupBy = z
   .enum(['song', 'album']).openapi({
@@ -27,7 +27,7 @@ export const RankingParam = z
 
 export const DataWithStat = z
   .object({
-    data: z.union([Song, Album]),
+    data: z.union([SongBase, Album]),
     stat: z.object({
       plays: z.number(),
     }),

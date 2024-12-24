@@ -11,7 +11,7 @@ import type {
 } from '@/db/types'
 import type { Id as AlbumId, Album, AlbumIn } from '@/types/albums'
 import type { Id as ArtistId, Artist } from '@/types/artists'
-import type { Id as SongId, Song, SongIn, ArtistWithRole } from '@/types/songs'
+import type { Id as SongId, SongBase, Song, SongIn, ArtistWithRole } from '@/types/songs'
 import type { Id as WriterId, Writer } from '@/types/writers'
 
 export function mapArtist(obj: ArtistDB): Artist {
@@ -72,12 +72,27 @@ export function mapSong(
   }
 }
 
+export function mapSongBase(obj: SongDB): SongBase {
+  return {
+    id: obj.uuid as SongId,
+    name: obj.name,
+    year: obj.released_year,
+  }
+}
+
 export function mapNewSongDB(obj: SongIn, album: AlbumDB | null): NewSongDB {
   return {
     name: obj.name,
     album_id: album ? album.id : null,
     released_year: obj.year,
   }
+}
+
+export function getSongMap(songs: SongDB[]) {
+  return songs.reduce<Record<string, SongDB>>((map, obj) => {
+    map[obj.id] = obj
+    return map
+  }, {})
 }
 
 export function getSongArtistsMap(songArtists: SongArtistsWithDataDB[]): Record<string, ArtistWithRoleDB[]> {

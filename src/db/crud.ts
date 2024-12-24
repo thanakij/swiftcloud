@@ -1,6 +1,6 @@
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
-import { and, count, eq, ilike, inArray } from 'drizzle-orm'
+import { sql, and, count, sum, eq, ilike, inArray, isNotNull } from 'drizzle-orm'
 
 import type {
   ArtistDB,
@@ -13,9 +13,10 @@ import type {
   SongWritersWithDataDB,
   NewSongArtistsDB,
   NewSongWritersDB,
+  RankingDB,
 } from '@/db/types'
 
-import { artists, writers, albums, songs, songArtists, songWriters } from '@/db/schemas'
+import { artists, writers, albums, songs, songArtists, songWriters, stats } from '@/db/schemas'
 import { getOrderBy } from '@/utils'
 
 export const MAX_LIMIT = 100
@@ -58,8 +59,8 @@ export async function getWriterByUuid(db: NodePgDatabase, uuid: string): Promise
 
 export async function countAlbums(db: NodePgDatabase, q: string | null): Promise<number> {
   const filters = q ? [ilike(albums.name, `%${q}%`)] : []
-  const record = await db.select({ n: count() }).from(albums).where(and(...filters))
-  return record[0].n
+  const records = await db.select({ n: count() }).from(albums).where(and(...filters))
+  return records[0].n
 }
 
 export async function listAlbums(
@@ -125,8 +126,8 @@ export async function countSongs(
     filters.push(eq(songs.album_id, album.id))
   }
   if (year) filters.push(eq(songs.released_year, year))
-  const record = await db.select({ n: count() }).from(songs).where(and(...filters))
-  return record[0].n
+  const records = await db.select({ n: count() }).from(songs).where(and(...filters))
+  return records[0].n
 }
 
 export async function listSongs(
@@ -181,6 +182,13 @@ export async function getSongByUuid(db: NodePgDatabase, uuid: string): Promise<S
   return records.length > 0 ? records[0] : null
 }
 
+export async function getSongsByIds(db: NodePgDatabase, ids: number[]): Promise<SongDB[]> {
+  return await db
+    .select()
+    .from(songs)
+    .where(inArray(songs.id, ids))
+}
+
 export async function insertSong(db: NodePgDatabase, obj: NewSongDB): Promise<SongDB | null> {
   const records = await db.insert(songs).values(obj).returning()
   return records.length > 0 ? records[0] : null
@@ -210,4 +218,71 @@ export async function insertSongArtists(db: NodePgDatabase, obj: NewSongArtistsD
 
 export async function insertSongWriters(db: NodePgDatabase, obj: NewSongWritersDB[]): Promise<void> {
   await db.insert(songWriters).values(obj)
+}
+
+export async function countStats(
+  db: NodePgDatabase,
+  from: string | null,
+  to: string | null,
+  month: number | null,
+  year: number | null,
+  group: string | null,
+): Promise<number> {
+  const groupByField = group === 'album' ? stats.album_id : stats.song_id
+  const filters = group === 'album' ? [isNotNull(groupByField)] : []
+  if (from) {
+    const splits = from.split('-')
+    const val = (parseInt(splits[0], 10) * 100) + parseInt(splits[1], 10)
+    filters.push(sql`(year * 100) + month >= ${val}`)
+  }
+  if (to) {
+    const splits = to.split('-')
+    const val = (parseInt(splits[0], 10) * 100) + parseInt(splits[1], 10)
+    filters.push(sql`(year * 100) + month <= ${val}`)
+  }
+  if (month) filters.push(eq(stats.month, month))
+  if (year) filters.push(eq(stats.year, year))
+  const subq = db
+    .select({ id: groupByField })
+    .from(stats)
+    .where(and(...filters))
+    .groupBy(groupByField)
+  const records = await db.select({ n: count() }).from(subq.as('subq'))
+  return records[0].n
+}
+
+export async function rankStats(
+  db: NodePgDatabase,
+  from: string | null,
+  to: string | null,
+  month: number | null,
+  year: number | null,
+  group: string | null,
+  offset: number,
+  limit: number,
+): Promise<RankingDB[]> {
+  const groupByField = group === 'album' ? stats.album_id : stats.song_id
+  const filters = group === 'album' ? [isNotNull(groupByField)] : []
+  if (from) {
+    const splits = from.split('-')
+    const val = (parseInt(splits[0], 10) * 100) + parseInt(splits[1], 10)
+    filters.push(sql`(year * 100) + month >= ${val}`)
+  }
+  if (to) {
+    const splits = to.split('-')
+    const val = (parseInt(splits[0], 10) * 100) + parseInt(splits[1], 10)
+    filters.push(sql`(year * 100) + month <= ${val}`)
+  }
+  if (month) filters.push(eq(stats.month, month))
+  if (year) filters.push(eq(stats.year, year))
+  const records = await db
+    .select({ id: groupByField, n: sum(stats.plays).as('n') })
+    .from(stats)
+    .where(and(...filters))
+    .groupBy(groupByField)
+    .orderBy(sql`n desc, ${groupByField}`)
+    .limit(limit > MAX_LIMIT ? MAX_LIMIT : limit)
+    .offset(offset)
+  // 'n' is of type string so we convert it to number
+  return records.map((each) => ({ id: each.id ?? 0, n: parseInt(each.n ?? '0', 10) }))
 }

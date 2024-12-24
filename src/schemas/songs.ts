@@ -38,20 +38,23 @@ export const ArtistWithRole = Artist.extend({
   role: ArtistRole,
 }).openapi('ArtistWithRole')
 
-export const Song = z
+export const SongBase = z
   .object({
     id: Id,
     name: z.string().openapi({
       example: 'The 1',
     }),
-    artists: z.array(ArtistWithRole),
-    writers: z.array(Writer).optional().default([]),
-    album: Album.nullable().optional().default(null),
     year: z.number().openapi({
       example: 2020,
     }),
   })
-  .openapi('Song')
+  .openapi('SongBase')
+
+export const Song = SongBase.extend({
+  artists: z.array(ArtistWithRole),
+  writers: z.array(Writer).optional().default([]),
+  album: Album.nullable().optional().default(null),
+}).openapi('Song')
 
 export const SongIn = z
   .object({
