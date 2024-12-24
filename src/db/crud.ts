@@ -18,6 +18,8 @@ import type {
 import { artists, writers, albums, songs, songArtists, songWriters } from '@/db/schemas'
 import { getOrderBy } from '@/utils'
 
+export const MAX_LIMIT = 100
+
 export async function getArtist(db: NodePgDatabase, id: number): Promise<ArtistDB | null> {
   const records = await db
     .select()
@@ -71,7 +73,7 @@ export async function listAlbums(
     .from(albums)
     .where(and(...filters))
     .orderBy(...sorting)
-    .limit(limit)
+    .limit(limit > MAX_LIMIT ? MAX_LIMIT : limit)
     .offset(offset)
 }
 
@@ -134,7 +136,7 @@ export async function listSongs(
     .from(songs)
     .where(and(...filters))
     .orderBy(...sorting)
-    .limit(limit)
+    .limit(limit > MAX_LIMIT ? MAX_LIMIT : limit)
     .offset(offset)
 }
 
