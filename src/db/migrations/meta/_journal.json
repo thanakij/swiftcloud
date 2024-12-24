@@ -36,6 +36,13 @@
       "when": 1735034101558,
       "tag": "0004_seed-writers",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1735035287175,
+      "tag": "0005_seed-albums",
+      "breakpoints": true
     }
   ]
 }
