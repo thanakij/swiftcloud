@@ -3,6 +3,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "lint": "eslint",
+    "type-check": "tsc --noEmit",
     "test": "vitest run",
     "start": "bun src/index.ts"
   },
