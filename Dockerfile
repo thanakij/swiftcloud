@@ -8,4 +8,6 @@ RUN bun install --frozen-lockfile
 COPY eslint.config.mjs package.json tsconfig.json vitest.config.mts .
 COPY scripts scripts
 COPY src src
+RUN bun run lint
+RUN bun run type-check
 CMD ["bun", "src/index.ts"]
