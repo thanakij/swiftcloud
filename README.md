@@ -49,6 +49,7 @@ After making some changes to **src/db/schemas.ts**, you can generate a migration
 
 # `production` mode
 
+There is no auto-reload for `production` mode.
 
 ## Step 1. Set up .env
 ```console
