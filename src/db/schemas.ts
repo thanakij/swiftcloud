@@ -74,7 +74,7 @@ export const stats = pgTable('stats', {
 }, (t) => {
   return {
     unq: unique().on(t.song_id, t.year, t.month),
-    check: check('month', sql`${t.month} >= 1 AND ${t.month} <= 12`),
     album_idx: index('stats_album_idx').on(t.album_id, t.plays),
+    check: check('month', sql`${t.month} >= 1 AND ${t.month} <= 12`),
   }
 })

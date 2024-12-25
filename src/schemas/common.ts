@@ -9,3 +9,5 @@ export const Meta = z
       example: 2,
     }),
   })
+
+export const Null = z.null()
