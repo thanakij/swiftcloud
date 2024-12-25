@@ -1,7 +1,9 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { env } from 'hono/adapter'
+import { cors } from 'hono/cors'
 import { html } from 'hono/html'
 import { HTTPException } from 'hono/http-exception'
+import { logger } from 'hono/logger'
 
 import type { Id as AlbumId } from '@/types/albums'
 import type { Errors as ErrorsType } from '@/types/common'
@@ -45,6 +47,12 @@ app.onError((err, c) => {
     source: err.cause ? String(err.cause) : null,
   } satisfies ErrorsType, 500)
 })
+
+// middlewares
+// - https://hono.dev/docs/middleware/builtin/cors
+// - https://hono.dev/docs/middleware/builtin/logger
+app.use('*', cors())
+app.use('*', logger())
 
 app.openapi(GET('/albums',
   { query: ListAlbumsParam },
