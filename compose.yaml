@@ -1,4 +1,16 @@
 services:
+  app:
+    build:
+      context: .
+    environment:
+      DB_HOST: ${DB_HOST:-db}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      DEBUG: ${DEBUG:-}
+    ports:
+      - 3000:3000
+
   db:
     image: postgres:17.2-bookworm
     environment:
