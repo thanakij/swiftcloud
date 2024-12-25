@@ -21,7 +21,7 @@ import { formatZodErrors } from '@/utils'
 
 const JSON = 'application/json'
 
-const app = new OpenAPIHono({
+export const app = new OpenAPIHono({
   defaultHook: (result, c) => {
     if (!result.success) {
       console.error(result.error)
