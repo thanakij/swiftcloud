@@ -29,12 +29,21 @@ docker compose up -d db adminer
 bun run dev
 ```
 
-## Step 6. Visit API Documentation
+## Step 6. Visit API documentation
 - http://localhost:3000/docs
 
 ## Step 7. Testing
 ```console
 bun run test
+```
+
+## Step 8. Visit Adminer console
+- http://localhost:8080
+
+## Step 9. Generate a migration file
+After making some changes to **src/db/schemas.ts**, you can generate a migration file via
+```console
+./scripts/gen-migrations.sh <file-name>
 ```
 
 # `production` mode
