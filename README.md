@@ -8,6 +8,7 @@
 ```console
 cp template.env .env
 ```
+If set `DEBUG=1`, then the logs will print the SQL statements
 
 ## Step 2. Install dependencies
 ```console
