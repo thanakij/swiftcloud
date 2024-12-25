@@ -9,6 +9,10 @@ services:
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
       DB_NAME: ${DB_NAME}
+      CACHE_HOST: ${CACHE_HOST:-cache}
+      CACHE_PORT: ${CACHE_PORT:-6379}
+      CACHE_PASS: ${CACHE_PASS:-}
+      CACHE_DB: ${CACHE_DB:-0}
     ports:
       - 3000:3000
 
@@ -33,6 +37,12 @@ services:
     image: adminer:4.8.1-standalone
     ports:
       - 8080:8080
+    restart: always
+
+  cache:
+    image: redis:7.4.1-alpine
+    ports:
+      - 6379:6379
     restart: always
 
 volumes:

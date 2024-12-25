@@ -17,7 +17,7 @@ bun install
 
 ## Step 3. Start Docker containers for Postgres
 ```console
-docker compose up -d db adminer
+docker compose up -d db adminer cache
 ```
 
 ## Step 4. Run migration scripts
