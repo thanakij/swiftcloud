@@ -2,45 +2,74 @@
   - Bun
   - Docker
 
-# 1. Set up .env
-```
+# `development` mode
+
+## Step 1. Set up .env
+```console
 cp template.env .env
 ```
 
-# 2. Start Docker for Postgres
-```
-docker compose up -d
-```
-
-# 3. Run migration scripts
-```
-./scripts/run-migrations.sh
-```
-
-# 4. Install dependencies
-```
+## Step 2. Install dependencies
+```console
 bun install
 ```
 
-# 5. Start API app
+## Step 3. Start Docker containers for Postgres
+```console
+docker compose up -d db adminer
 ```
+
+## Step 4. Run migration scripts
+```console
+./scripts/run-migrations.sh
+```
+
+## Step 5. Start API app
+```console
 bun run dev
 ```
 
-# 6. Visit http://localhost:3000/docs
+## Step 6. Visit API Documentation
+- http://localhost:3000/docs
 
-# 7. Test API app
-```
+## Step 7. Testing
+```console
 bun run test
 ```
 
-# 8. Discussions
-- TypeScript, Hono, Drizzle, PostgreSQL
-- OpenAPI (Swagger), Zod
+# `production` mode
+
+
+## Step 1. Set up .env
+```console
+cp template.env .env
+```
+
+## Step 2. Install dependencies
+```console
+bun install
+```
+
+## Step 3. Start Docker containers
+```console
+docker compose up -d --build
+```
+
+## Step 4. Run migration scripts
+```console
+./scripts/run-migrations.sh
+```
+
+## Step 5. Visit API Documentation
+- http://localhost:3000/docs
+
+# Discussions
+- Bun, TypeScript, Hono, Drizzle, PostgreSQL
+- OpenAPI (Swagger), Zod for schema validations
 - DB structure is well designed
 - DB is seeded with initial data
 - Support flexible filter, search, sort and pagination
 - Join only whenever it makes sense, otherwise avoid the join especially on big tables
 - Deal with N+1 issue by querying for all associated records at once
-- A simple test on GET /ranking using vitest is provided
+- A simple test on **GET /ranking** using vitest is provided
 - Application logic is decoupled from the framework (ie, didn't that we are using Hono)
