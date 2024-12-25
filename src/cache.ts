@@ -2,8 +2,8 @@ import Redis from 'ioredis'
 
 import type { Env } from '@/types/common'
 
-//const EXPIRED_IN_SECONDS = 86400
-const EXPIRED_IN_SECONDS = 10
+const EXPIRED_IN_SECONDS = 86400 // 1 day
+//const EXPIRED_IN_SECONDS = 10
 
 export class Cache {
   private redis: Redis
