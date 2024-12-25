@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { app } from './index'
+import { app } from '@/app'
 
 describe('simple', () => {
   test('GET /ranking', async () => {
