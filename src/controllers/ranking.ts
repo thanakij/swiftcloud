@@ -1,15 +1,10 @@
-import type { Context } from 'hono'
-
-import { env } from 'hono/adapter'
-
+import type { Env } from '@/types/common'
 import type { RankingParam } from '@/types/ranking'
 
 import { RepositoryFactory } from '@/repositories/factory'
 
-export async function rank(c: Context) {
-  // @ts-expect-error not typed well
-  const query: RankingParam = c.req.valid('query')
+export async function rank({ env, query }: { env: Env, query: RankingParam }) {
   console.log(query)
-  const statRepository = RepositoryFactory.newStatRepository(env(c))
-  return c.json(await statRepository.rank(query), 200)
+  const statRepository = RepositoryFactory.newStatRepository(env)
+  return await statRepository.rank(query)
 }

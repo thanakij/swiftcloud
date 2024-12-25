@@ -1,39 +1,22 @@
-import type { Context } from 'hono'
-
-import { env } from 'hono/adapter'
-import { HTTPException } from 'hono/http-exception'
-
+import type { Env } from '@/types/common'
 import type { ListSongsParam, Id, SongIn } from '@/types/songs'
 
 import { RepositoryFactory } from '@/repositories/factory'
 
-export async function listSongs(c: Context) {
-  // @ts-expect-error not typed well
-  const query: ListSongsParam = c.req.valid('query')
+export async function listSongs({ env, query }: { env: Env, query: ListSongsParam }) {
   console.log(query)
-  const songRepository = RepositoryFactory.newSongRepository(env(c))
-  return c.json(await songRepository.list(query), 200)
+  const songRepository = RepositoryFactory.newSongRepository(env)
+  return await songRepository.list(query)
 }
 
-export async function getSong(c: Context) {
-  const id = c.req.param('id') as Id
+export async function getSong(id: Id, { env }: { env: Env }) {
   console.log(id)
-  const songRepository = RepositoryFactory.newSongRepository(env(c))
-  const song = await songRepository.get(id)
-  if (!song) throw new HTTPException(404, { message: 'Song not found' })
-  return c.json(song, 200)
+  const songRepository = RepositoryFactory.newSongRepository(env)
+  return await songRepository.get(id)
 }
 
-export async function createSong(c: Context) {
-  // @ts-expect-error not typed well
-  const song : SongIn = c.req.valid('json')
+export async function createSong({ env, song } : { env: Env, song: SongIn }) {
   console.log(song)
-  const songRepository = RepositoryFactory.newSongRepository(env(c))
-  try {
-    const id = await songRepository.create(song)
-    return c.json({ id }, 201, { Location: `/songs/${id}` })
-  } catch (e) {
-    console.error(e)
-    throw new HTTPException(500, { message: 'Cannot create a song', cause: e })
-  }
+  const songRepository = RepositoryFactory.newSongRepository(env)
+  return await songRepository.create(song)
 }
