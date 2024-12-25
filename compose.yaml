@@ -3,11 +3,12 @@ services:
     build:
       context: .
     environment:
+      DEBUG: ${DEBUG:-}
       DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
       DB_NAME: ${DB_NAME}
-      DEBUG: ${DEBUG:-}
     ports:
       - 3000:3000
 
