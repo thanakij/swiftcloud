@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+set -a && source .env
+
 DB_HOST=${DB_HOST:-localhost}
 DB_PORT=${DB_PORT:-5432}
 DB_USER=${DB_USER}
