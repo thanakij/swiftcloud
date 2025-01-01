@@ -2,11 +2,11 @@
   "name": "swiftcloud",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "test": "vitest run",
+    "dev": "set -a && source .env && tsx watch src/index.ts",
+    "test": "set -a && source .env && vitest run",
     "lint": "eslint",
     "type-check": "tsc --noEmit",
-    "start": "bun src/index.ts"
+    "start": "set -a && source .env && bun src/index.ts"
   },
   "dependencies": {
     "@eslint/create-config": "1.4.0",
