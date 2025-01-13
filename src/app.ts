@@ -198,4 +198,4 @@ app.get('/docs', (c) => c.html(
   `,
 ))
 
-export { app }
+export default app

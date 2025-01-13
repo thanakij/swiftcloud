@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 
 import type { Ranking } from '@/types/ranking'
 
-import { app } from '@/app'
+import app from '@/app'
 
 describe('/ranking', () => {
   test('GET /ranking (top 10 songs)', async () => {
