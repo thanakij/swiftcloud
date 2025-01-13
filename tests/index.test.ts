@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 
 import type { Ranking } from '@/types/ranking'
 
-import app from '@/app'
+import app from '@/index'
 
 describe('/ranking', () => {
   test('GET /ranking (top 10 songs)', async () => {

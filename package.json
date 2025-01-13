@@ -2,11 +2,11 @@
   "name": "swiftcloud",
   "type": "module",
   "scripts": {
-    "dev": "set -a && source .env && bun --watch src/app.ts",
+    "dev": "set -a && source .env && bun --watch src/index.ts",
     "test": "set -a && source .env && bun test",
     "lint": "eslint",
     "type-check": "tsc --noEmit",
-    "start": "set -a && source .env && NODE_ENV=production bun src/app.ts"
+    "start": "set -a && source .env && NODE_ENV=production bun src/index.ts"
   },
   "dependencies": {
     "@eslint/create-config": "1.4.0",
