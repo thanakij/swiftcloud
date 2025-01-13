@@ -77,7 +77,7 @@ docker compose up -d --build
 # Discussions
 - Bun, TypeScript, Hono, Drizzle, PostgreSQL
 - OpenAPI (Swagger), Zod for schema validations
-- DB structure is well designed
+- [DB structure](https://dbdiagram.io/d/SwiftCloud-677e042a0231eca7297c2409) is well designed
 - DB is seeded with initial data
 - Support flexible filter, search, sort and pagination
 - Join only whenever it makes sense, otherwise avoid the join especially on big tables
