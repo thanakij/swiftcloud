@@ -83,4 +83,4 @@ docker compose up -d --build
 - Join only whenever it makes sense, otherwise avoid the join especially on big tables
 - Deal with N+1 issue by querying for all associated records at once
 - A simple test on **GET /ranking** using vitest is provided
-- Application logic is decoupled from the framework (ie, didn't that we are using Hono)
+- Application logic is decoupled from the framework (ie, the core app is not knowing that we use Hono)
