@@ -1,4 +1,4 @@
-import { artists, writers, albums, songs, songArtists, songWriters, stats } from '@/db/schemas'
+import type { artists, writers, albums, songs, songArtists, songWriters, stats } from '@/db/schemas'
 
 export type ArtistDB = typeof artists.$inferSelect
 export type WriterDB = typeof writers.$inferSelect

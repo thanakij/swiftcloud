@@ -51,8 +51,8 @@ app.onError((err, c) => {
 // middlewares
 // - https://hono.dev/docs/middleware/builtin/cors
 // - https://hono.dev/docs/middleware/builtin/logger
-app.use('*', cors())
-app.use('*', logger())
+app.use(cors())
+app.use(logger())
 
 app.openapi(GET('/albums',
   { query: ListAlbumsParam },

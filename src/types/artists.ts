@@ -1,9 +1,6 @@
-import { z } from 'zod'
+import type { z } from 'zod'
 
-import {
-  Id as _Id,
-  Artist as _Artist,
-} from '@/schemas/artists'
+import type { Id, Artist } from '@/schemas/artists'
 
-export type Id = z.infer<typeof _Id>
-export type Artist = z.infer<typeof _Artist>
+export type Id = z.infer<typeof Id>
+export type Artist = z.infer<typeof Artist>
