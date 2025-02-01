@@ -6,7 +6,7 @@ services:
       DEBUG: ${DEBUG:-}
       DB_HOST: ${DB_HOST:-db}
       DB_PORT: ${DB_PORT:-5432}
-      DB_USER: ${DB_USER}
+      DB_USER: ${DB_USER:-postgres}
       DB_PASS: ${DB_PASS}
       DB_NAME: ${DB_NAME}
       CACHE_HOST: ${CACHE_HOST:-cache}
@@ -19,7 +19,7 @@ services:
   db:
     image: postgres:17.2-bookworm
     environment:
-      POSTGRES_USER: ${DB_USER}
+      POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
     volumes:
@@ -27,7 +27,7 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
+      test: ["CMD", "pg_isready", "-U", "${DB_USER:-postgres}"]
       interval: 1s
       timeout: 5s
       retries: 10

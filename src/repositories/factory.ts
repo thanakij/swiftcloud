@@ -20,8 +20,8 @@ import { MockWriterRepository } from '@/repositories/mock/writers'
 
 function getDB(env: Env) {
   const { DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME, DEBUG } = env
-  const DATABASE_URL = `postgresql://${DB_USER}:${DB_PASS}@${DB_HOST ?? 'localhost'}:${DB_PORT ?? 5432}/${DB_NAME}`
-  return drizzle({ connection: DATABASE_URL, logger: ['true', '1'].includes(DEBUG ?? '') })
+  const URL = `postgresql://${DB_USER ?? 'postgres'}:${DB_PASS}@${DB_HOST ?? 'localhost'}:${DB_PORT ?? 5432}/${DB_NAME}`
+  return drizzle({ connection: URL, logger: ['true', '1'].includes(DEBUG ?? '') })
 }
 
 export class RepositoryFactory {
