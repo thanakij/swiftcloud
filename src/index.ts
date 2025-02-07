@@ -40,12 +40,12 @@ app.use(logger())
 
 init(app)
 
-app.doc('/openapi.json', (c) => ({
+app.doc31('/openapi.json', (c) => ({
   info: {
     title: 'SwiftCloud',
     version: '1.0.0',
   },
-  openapi: '3.0.0',
+  openapi: '3.1.0',
   servers: [
     {
       description: 'local',
