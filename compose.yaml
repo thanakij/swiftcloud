@@ -31,19 +31,16 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
-    restart: always
 
   adminer:
     image: adminer:4.8.1-standalone
     ports:
       - 8080:8080
-    restart: always
 
   cache:
     image: redis:7.4.1-alpine
     ports:
       - 6379:6379
-    restart: always
 
 volumes:
   pgdata:
