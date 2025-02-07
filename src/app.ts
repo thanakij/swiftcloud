@@ -1,4 +1,5 @@
 import type { OpenAPIHono } from '@hono/zod-openapi'
+import type Redis from 'ioredis'
 
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { env } from 'hono/adapter'
@@ -7,27 +8,28 @@ import type { Id as AlbumId } from '@/types/albums'
 import type { Env, PgClient, Variables } from '@/types/common'
 import type { Id as SongId } from '@/types/songs'
 
-import { listAlbums, getAlbum, createAlbum } from '@/controllers/albums'
-import { rank } from '@/controllers/ranking'
-import { listSongs, getSong, createSong } from '@/controllers/songs'
 import { RepositoryFactory } from '@/repositories/factory'
 import { GET, POST } from '@/routers'
 import { ListAlbumsParam, ListAlbums, AlbumIdInPath, Album, AlbumIn, CreatedAlbumId } from '@/schemas/albums'
 import { Errors } from '@/schemas/common'
 import { RankingParam, Ranking } from '@/schemas/ranking'
 import { ListSongsParam, ListSongs, SongIdInPath, Song, SongIn, CreatedSongId } from '@/schemas/songs'
+import { AlbumService } from '@/services/albums'
+import { RankingService } from '@/services/ranking'
+import { SongService } from '@/services/songs'
 
 const TYPE_JSON = 'application/json'
 
-function configService(client: PgClient | null, environ: Env) {
+function configService(client: PgClient | null, cache: Redis | null, environ: Env) {
   const logger = ['true', '1'].includes(environ.DEBUG ?? '')
   const db = client ? drizzle({ client, logger }) : null
-  const artistRepository = RepositoryFactory.newArtistRepository(db)
-  const writerRepository = RepositoryFactory.newWriterRepository(db)
   const albumRepository = RepositoryFactory.newAlbumRepository(db)
+  const albumService = new AlbumService(albumRepository)
   const songRepository = RepositoryFactory.newSongRepository(db)
+  const songService = new SongService(songRepository)
   const statRepository = RepositoryFactory.newStatRepository(db)
-  return { artistRepository, writerRepository, albumRepository, songRepository, statRepository }
+  const rankingService = new RankingService(statRepository, cache)
+  return { albumService, songService, rankingService }
 }
 
 export function init(app: OpenAPIHono<{ Variables: Variables }>) {
@@ -38,9 +40,9 @@ export function init(app: OpenAPIHono<{ Variables: Variables }>) {
       422: { content: { [TYPE_JSON]: { schema: Errors } }, description: 'Validation error' },
     },
   ), async (c) => {
-    const { albumRepository } = configService(c.get('db'), env(c))
+    const { albumService } = configService(c.get('db'), c.get('cache'), env(c))
     const query = c.req.valid('query')
-    const result = await listAlbums(albumRepository, { query })
+    const result = await albumService.list(query)
     return c.json(result, 200)
   })
 
@@ -52,9 +54,9 @@ export function init(app: OpenAPIHono<{ Variables: Variables }>) {
       422: { content: { [TYPE_JSON]: { schema: Errors } }, description: 'Validation error' },
     },
   ), async (c) => {
-    const { albumRepository } = configService(c.get('db'), env(c))
+    const { albumService } = configService(c.get('db'), c.get('cache'), env(c))
     const id = c.req.param('id') as AlbumId
-    const result = await getAlbum(albumRepository, id)
+    const result = await albumService.get(id)
     if (!result) return c.json({ errors: ['Album not found'], source: id }, 404)
     return c.json(result, 200)
   })
@@ -68,10 +70,10 @@ export function init(app: OpenAPIHono<{ Variables: Variables }>) {
       500: { content: { [TYPE_JSON]: { schema: Errors } }, description: 'Cannot save' },
     },
   ), async (c) => {
-    const { albumRepository } = configService(c.get('db'), env(c))
+    const { albumService } = configService(c.get('db'), c.get('cache'), env(c))
     const album = c.req.valid('json')
     try {
-      const id = await createAlbum(albumRepository, { album })
+      const id = await albumService.create(album)
       return c.json({ id }, 201, { Location: `/albums/${id}` })
     } catch (e) {
       console.error(e)
@@ -86,9 +88,9 @@ export function init(app: OpenAPIHono<{ Variables: Variables }>) {
       422: { content: { [TYPE_JSON]: { schema: Errors } }, description: 'Validation error' },
     },
   ), async (c) => {
-    const { songRepository } = configService(c.get('db'), env(c))
+    const { songService } = configService(c.get('db'), c.get('cache'), env(c))
     const query = c.req.valid('query')
-    const result = await listSongs(songRepository, { query })
+    const result = await songService.list(query)
     return c.json(result, 200)
   })
 
@@ -100,9 +102,9 @@ export function init(app: OpenAPIHono<{ Variables: Variables }>) {
       422: { content: { [TYPE_JSON]: { schema: Errors } }, description: 'Validation error' },
     },
   ), async (c) => {
-    const { songRepository } = configService(c.get('db'), env(c))
+    const { songService } = configService(c.get('db'), c.get('cache'), env(c))
     const id = c.req.param('id') as SongId
-    const result = await getSong(songRepository, id)
+    const result = await songService.get(id)
     if (!result) return c.json({ errors: ['Song not found'], source: id }, 404)
     return c.json(result, 200)
   })
@@ -116,10 +118,10 @@ export function init(app: OpenAPIHono<{ Variables: Variables }>) {
       500: { content: { [TYPE_JSON]: { schema: Errors } }, description: 'Cannot save' },
     },
   ), async (c) => {
-    const { songRepository } = configService(c.get('db'), env(c))
+    const { songService } = configService(c.get('db'), c.get('cache'), env(c))
     const song = c.req.valid('json')
     try {
-      const id = await createSong(songRepository, { song })
+      const id = await songService.create(song)
       return c.json({ id }, 201, { Location: `/songs/${id}` })
     } catch (e) {
       console.error(e)
@@ -134,10 +136,9 @@ export function init(app: OpenAPIHono<{ Variables: Variables }>) {
       422: { content: { [TYPE_JSON]: { schema: Errors } }, description: 'Validation error' },
     },
   ), async (c) => {
-    const { statRepository } = configService(c.get('db'), env(c))
-    const cache = c.get('cache')
+    const { rankingService } = configService(c.get('db'), c.get('cache'), env(c))
     const query = c.req.valid('query')
-    const result = await rank(statRepository, cache, { query })
+    const result = await rankingService.rank(query)
     return c.json(result, 200)
   })
 }
