@@ -1,22 +1,17 @@
+import type { AlbumRepository } from '@/repositories/albums'
 import type { ListAlbumsParam, Id, AlbumIn } from '@/types/albums'
-import type { Env } from '@/types/common'
 
-import { RepositoryFactory } from '@/repositories/factory'
-
-export async function listAlbums({ env, query }: { env: Env, query: ListAlbumsParam }) {
+export async function listAlbums(albumRepository: AlbumRepository, { query }: { query: ListAlbumsParam }) {
   console.log(query)
-  const albumRepository = RepositoryFactory.newAlbumRepository(env)
   return await albumRepository.list(query)
 }
 
-export async function getAlbum(id: Id, { env }: { env: Env }) {
+export async function getAlbum(albumRepository: AlbumRepository, id: Id) {
   console.log(id)
-  const albumRepository = RepositoryFactory.newAlbumRepository(env)
   return await albumRepository.get(id)
 }
 
-export async function createAlbum({ env, album } : { env: Env, album: AlbumIn }) {
+export async function createAlbum(albumRepository: AlbumRepository, { album } : { album: AlbumIn }) {
   console.log(album)
-  const albumRepository = RepositoryFactory.newAlbumRepository(env)
   return await albumRepository.create(album)
 }

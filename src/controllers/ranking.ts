@@ -1,22 +1,21 @@
-import type { Env } from '@/types/common'
+import type { Redis } from 'ioredis'
+
+import type { StatRepository } from '@/repositories/stats'
 import type { RankingParam } from '@/types/ranking'
 
-import { Cache } from '@/cache'
-import { RepositoryFactory } from '@/repositories/factory'
+import { exists, get, set } from '@/cache'
 
-export async function rank({ env, query }: { env: Env, query: RankingParam }) {
+export async function rank(statRepository: StatRepository, cache: Redis | null, { query }: { query: RankingParam }) {
   console.log(query)
-  const cache = new Cache(env)
-  // eslint-disable-next-line @stylistic/max-len
-  const key = `from=${query.from},to=${query.to},month=${query.month},year=${query.year},group=${query.group},offset=${query.offset},limit=${query.limit}`
-  if (await cache.exists(key)) {
+  const key = `from=${query.from},to=${query.to},month=${query.month},year=${query.year},` +
+    `group=${query.group},offset=${query.offset},limit=${query.limit}`
+  if (cache && await exists(cache, key)) {
     console.log('HIT')
-    const data = await cache.get(key)
+    const data = await get(cache, key)
     return data
   }
-  console.log('MISS')
-  const statRepository = RepositoryFactory.newStatRepository(env)
+  if (cache) console.log('MISS')
   const result = await statRepository.rank(query)
-  await cache.set(key, result)
+  if (cache) await set(cache, key, result)
   return result
 }

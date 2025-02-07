@@ -1,4 +1,5 @@
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
+import type { Redis } from 'ioredis'
 import type { Pool } from 'pg'
 import type { z } from 'zod'
 
@@ -12,6 +13,10 @@ export type DB = NodePgDatabase
 
 export type PgClient = Pool
 
+export type Variables = {
+  db: PgClient | null
+  cache: Redis | null
+}
 export interface Env {
   [key: string]: string | undefined;
 }

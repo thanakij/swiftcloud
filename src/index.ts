@@ -1,15 +1,18 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
+import { env } from 'hono/adapter'
 import { cors } from 'hono/cors'
 import { html } from 'hono/html'
 import { HTTPException } from 'hono/http-exception'
 import { logger } from 'hono/logger'
 
-import type { Errors as ErrorsType } from '@/types/common'
+import type { Errors as ErrorsType, Variables } from '@/types/common'
 
 import { init } from '@/app'
+import { getCache } from '@/cache'
+import { getDB } from '@/db/crud'
 import { formatZodErrors } from '@/utils'
 
-const app = new OpenAPIHono({
+const app = new OpenAPIHono<{ Variables: Variables }>({
   defaultHook: (result, c) => {
     if (!result.success) {
       console.error(result.error)
@@ -37,6 +40,24 @@ app.onError((err, c) => {
 
 app.use(cors())
 app.use(logger())
+
+// maintain compatibility with edge runtimes
+app.use(async (ctx, next) => {
+  const db = getDB(env(ctx))
+  const cache = getCache(env(ctx))
+  try {
+    ctx.set('db', db)
+    ctx.set('cache', cache)
+    await next()
+  } finally {
+    if (db) {
+      await db.end()
+    }
+    if (cache) {
+      await cache.disconnect()
+    }
+  }
+})
 
 init(app)
 

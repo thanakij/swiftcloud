@@ -1,11 +1,9 @@
-import { drizzle } from 'drizzle-orm/node-postgres'
-
 import type { AlbumRepository } from '@/repositories/albums'
 import type { ArtistRepository } from '@/repositories/artists'
 import type { SongRepository } from '@/repositories/songs'
 import type { StatRepository } from '@/repositories/stats'
 import type { WriterRepository } from '@/repositories/writers'
-import type { Env } from '@/types/common'
+import type { DB } from '@/types/common'
 
 import { DbAlbumRepository } from '@/repositories/db/albums'
 import { DbArtistRepository } from '@/repositories/db/artists'
@@ -18,28 +16,22 @@ import { MockSongRepository } from '@/repositories/mock/songs'
 import { MockStatRepository } from '@/repositories/mock/stats'
 import { MockWriterRepository } from '@/repositories/mock/writers'
 
-function getDB(env: Env) {
-  const { DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME, DEBUG } = env
-  const URL = `postgresql://${DB_USER ?? 'postgres'}:${DB_PASS}@${DB_HOST ?? 'db'}:${DB_PORT ?? 5432}/${DB_NAME}`
-  return drizzle({ connection: URL, logger: ['true', '1'].includes(DEBUG ?? '') })
-}
-
 export class RepositoryFactory {
-  public static newArtistRepository(env: Env): ArtistRepository {
-    return env.DB_PASS && env.DB_NAME ? new DbArtistRepository(getDB(env)) : new MockArtistRepository
+  public static newArtistRepository(db: DB | null): ArtistRepository {
+    return db ? new DbArtistRepository(db) : new MockArtistRepository()
   }
 
-  public static newWriterRepository(env: Env): WriterRepository {
-    return env.DB_PASS && env.DB_NAME ? new DbWriterRepository(getDB(env)) : new MockWriterRepository
+  public static newWriterRepository(db: DB | null): WriterRepository {
+    return db ? new DbWriterRepository(db) : new MockWriterRepository()
   }
 
-  public static newAlbumRepository(env: Env): AlbumRepository {
-    return env.DB_PASS && env.DB_NAME ? new DbAlbumRepository(getDB(env)) : new MockAlbumRepository
+  public static newAlbumRepository(db: DB | null): AlbumRepository {
+    return db ? new DbAlbumRepository(db) : new MockAlbumRepository()
   }
 
-  public static newSongRepository(env: Env): SongRepository {
-    if (env.DB_PASS && env.DB_NAME) {
-      return new DbSongRepository(getDB(env))
+  public static newSongRepository(db: DB | null): SongRepository {
+    if (db) {
+      return new DbSongRepository(db)
     }
     const albumRepository = new MockAlbumRepository()
     const artistRepository = new MockArtistRepository()
@@ -47,9 +39,9 @@ export class RepositoryFactory {
     return new MockSongRepository(albumRepository, artistRepository, writerRepository)
   }
 
-  public static newStatRepository(env: Env): StatRepository {
-    if (env.DB_PASS && env.DB_NAME) {
-      return new DbStatRepository(getDB(env))
+  public static newStatRepository(db: DB | null): StatRepository {
+    if (db) {
+      return new DbStatRepository(db)
     }
     const albumRepository = new MockAlbumRepository()
     const artistRepository = new MockArtistRepository()

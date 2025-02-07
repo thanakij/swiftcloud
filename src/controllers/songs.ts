@@ -1,22 +1,17 @@
-import type { Env } from '@/types/common'
+import type { SongRepository } from '@/repositories/songs'
 import type { ListSongsParam, Id, SongIn } from '@/types/songs'
 
-import { RepositoryFactory } from '@/repositories/factory'
-
-export async function listSongs({ env, query }: { env: Env, query: ListSongsParam }) {
+export async function listSongs(songRepository: SongRepository, { query }: { query: ListSongsParam }) {
   console.log(query)
-  const songRepository = RepositoryFactory.newSongRepository(env)
   return await songRepository.list(query)
 }
 
-export async function getSong(id: Id, { env }: { env: Env }) {
+export async function getSong(songRepository: SongRepository, id: Id) {
   console.log(id)
-  const songRepository = RepositoryFactory.newSongRepository(env)
   return await songRepository.get(id)
 }
 
-export async function createSong({ env, song } : { env: Env, song: SongIn }) {
+export async function createSong(songRepository: SongRepository, { song } : { song: SongIn }) {
   console.log(song)
-  const songRepository = RepositoryFactory.newSongRepository(env)
   return await songRepository.create(song)
 }
