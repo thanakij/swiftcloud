@@ -1,15 +1,14 @@
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
-
 import type { AlbumRepository } from '@/repositories/albums'
 import type { ListAlbumsParam, ListAlbums, Id, Album, AlbumIn } from '@/types/albums'
+import type { DB } from '@/types/common'
 
 import { countAlbums, listAlbums, getAlbumByUuid, insertAlbum } from '@/db/crud'
 import { mapAlbum, mapNewAlbumDB } from '@/repositories/db/utils'
 
 export class DbAlbumRepository implements AlbumRepository {
-  private db: NodePgDatabase
+  private db: DB
 
-  public constructor(db: NodePgDatabase) {
+  public constructor(db: DB) {
     this.db = db
   }
 

@@ -1,6 +1,5 @@
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
-
 import type { StatRepository } from '@/repositories/stats'
+import type { DB } from '@/types/common'
 import type { RankingParam, DataWithStat, Ranking } from '@/types/ranking'
 
 import { getSongsByIds, getAlbumsByIds } from '@/db/crud'
@@ -8,9 +7,9 @@ import { countStats, rankStats } from '@/db/crud'
 import { mapAlbum, getAlbumMap, mapSongBase, getSongMap } from '@/repositories/db/utils'
 
 export class DbStatRepository implements StatRepository {
-  private db: NodePgDatabase
+  private db: DB
 
-  public constructor(db: NodePgDatabase) {
+  public constructor(db: DB) {
     this.db = db
   }
 
@@ -37,14 +36,7 @@ export class DbStatRepository implements StatRepository {
       const songsMap = getSongMap(songs)
       data = records.map((each) => ({ data: mapSongBase(songsMap[each.id]), stat: { plays: each.n } }))
     }
-    const total = await countStats(
-      this.db,
-      param.from,
-      param.to,
-      param.month,
-      param.year,
-      param.group,
-    )
+    const total = await countStats(this.db, param.from, param.to, param.month, param.year, param.group)
     return { meta: { total, count: data.length }, data }
   }
 }

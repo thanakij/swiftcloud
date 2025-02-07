@@ -1,5 +1,15 @@
 import { z } from '@hono/zod-openapi'
 
+export const Errors = z
+  .object({
+    errors: z.array(z.string()),
+    source: z.string().nullable(),
+  })
+  .openapi('Error')
+
+export const Null = z.null()
+export const ZDate = z.string().date()
+
 export const Meta = z
   .object({
     total: z.number().openapi({
@@ -9,5 +19,3 @@ export const Meta = z
       example: 2,
     }),
   })
-
-export const Null = z.null()

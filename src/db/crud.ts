@@ -1,5 +1,3 @@
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
-
 import { sql, and, count, sum, eq, ilike, inArray, isNotNull } from 'drizzle-orm'
 
 import type {
@@ -15,13 +13,14 @@ import type {
   NewSongWritersDB,
   RankingDB,
 } from '@/db/types'
+import type { DB } from '@/types/common'
 
 import { artists, writers, albums, songs, songArtists, songWriters, stats } from '@/db/schemas'
 import { getOrderBy } from '@/utils'
 
 export const MAX_LIMIT = 100
 
-export async function getArtist(db: NodePgDatabase, id: number): Promise<ArtistDB | null> {
+export async function getArtist(db: DB, id: number): Promise<ArtistDB | null> {
   const records = await db
     .select()
     .from(artists)
@@ -30,7 +29,7 @@ export async function getArtist(db: NodePgDatabase, id: number): Promise<ArtistD
   return records.length > 0 ? records[0] : null
 }
 
-export async function getArtistByUuid(db: NodePgDatabase, uuid: string): Promise<ArtistDB | null> {
+export async function getArtistByUuid(db: DB, uuid: string): Promise<ArtistDB | null> {
   const records = await db
     .select()
     .from(artists)
@@ -39,7 +38,7 @@ export async function getArtistByUuid(db: NodePgDatabase, uuid: string): Promise
   return records.length > 0 ? records[0] : null
 }
 
-export async function getWriter(db: NodePgDatabase, id: number): Promise<WriterDB | null> {
+export async function getWriter(db: DB, id: number): Promise<WriterDB | null> {
   const records = await db
     .select()
     .from(artists)
@@ -48,7 +47,7 @@ export async function getWriter(db: NodePgDatabase, id: number): Promise<WriterD
   return records.length > 0 ? records[0] : null
 }
 
-export async function getWriterByUuid(db: NodePgDatabase, uuid: string): Promise<WriterDB | null> {
+export async function getWriterByUuid(db: DB, uuid: string): Promise<WriterDB | null> {
   const records = await db
     .select()
     .from(writers)
@@ -57,14 +56,14 @@ export async function getWriterByUuid(db: NodePgDatabase, uuid: string): Promise
   return records.length > 0 ? records[0] : null
 }
 
-export async function countAlbums(db: NodePgDatabase, q: string | null): Promise<number> {
+export async function countAlbums(db: DB, q: string | null): Promise<number> {
   const filters = q ? [ilike(albums.name, `%${q}%`)] : []
   const records = await db.select({ n: count() }).from(albums).where(and(...filters))
   return records[0].n
 }
 
 export async function listAlbums(
-  db: NodePgDatabase, q: string | null, offset: number, limit: number, sort: string | null,
+  db: DB, q: string | null, offset: number, limit: number, sort: string | null,
 ): Promise<AlbumDB[]> {
   const filters = q ? [ilike(albums.name, `%${q}%`)] : []
   // @ts-expect-error not typed well
@@ -83,7 +82,7 @@ export async function listAlbums(
     .offset(offset)
 }
 
-export async function getAlbum(db: NodePgDatabase, id: number): Promise<AlbumDB | null> {
+export async function getAlbum(db: DB, id: number): Promise<AlbumDB | null> {
   const records = await db
     .select()
     .from(albums)
@@ -92,7 +91,7 @@ export async function getAlbum(db: NodePgDatabase, id: number): Promise<AlbumDB 
   return records.length > 0 ? records[0] : null
 }
 
-export async function getAlbumByUuid(db: NodePgDatabase, uuid: string): Promise<AlbumDB | null> {
+export async function getAlbumByUuid(db: DB, uuid: string): Promise<AlbumDB | null> {
   const records = await db
     .select()
     .from(albums)
@@ -101,20 +100,20 @@ export async function getAlbumByUuid(db: NodePgDatabase, uuid: string): Promise<
   return records.length > 0 ? records[0] : null
 }
 
-export async function getAlbumsByIds(db: NodePgDatabase, ids: number[]): Promise<AlbumDB[]> {
+export async function getAlbumsByIds(db: DB, ids: number[]): Promise<AlbumDB[]> {
   return await db
     .select()
     .from(albums)
     .where(inArray(albums.id, ids))
 }
 
-export async function insertAlbum(db: NodePgDatabase, obj: NewAlbumDB): Promise<AlbumDB | null> {
+export async function insertAlbum(db: DB, obj: NewAlbumDB): Promise<AlbumDB | null> {
   const records = await db.insert(albums).values(obj).returning()
   return records.length > 0 ? records[0] : null
 }
 
 export async function countSongs(
-  db: NodePgDatabase,
+  db: DB,
   q: string | null,
   album_uuid: string | null,
   year: number | null,
@@ -131,7 +130,7 @@ export async function countSongs(
 }
 
 export async function listSongs(
-  db: NodePgDatabase,
+  db: DB,
   q: string | null,
   album_uuid: string | null,
   year: number | null,
@@ -164,7 +163,7 @@ export async function listSongs(
     .offset(offset)
 }
 
-export async function getSong(db: NodePgDatabase, id: number): Promise<SongDB | null> {
+export async function getSong(db: DB, id: number): Promise<SongDB | null> {
   const records = await db
     .select()
     .from(songs)
@@ -173,7 +172,7 @@ export async function getSong(db: NodePgDatabase, id: number): Promise<SongDB | 
   return records.length > 0 ? records[0] : null
 }
 
-export async function getSongByUuid(db: NodePgDatabase, uuid: string): Promise<SongDB | null> {
+export async function getSongByUuid(db: DB, uuid: string): Promise<SongDB | null> {
   const records = await db
     .select()
     .from(songs)
@@ -182,19 +181,19 @@ export async function getSongByUuid(db: NodePgDatabase, uuid: string): Promise<S
   return records.length > 0 ? records[0] : null
 }
 
-export async function getSongsByIds(db: NodePgDatabase, ids: number[]): Promise<SongDB[]> {
+export async function getSongsByIds(db: DB, ids: number[]): Promise<SongDB[]> {
   return await db
     .select()
     .from(songs)
     .where(inArray(songs.id, ids))
 }
 
-export async function insertSong(db: NodePgDatabase, obj: NewSongDB): Promise<SongDB | null> {
+export async function insertSong(db: DB, obj: NewSongDB): Promise<SongDB | null> {
   const records = await db.insert(songs).values(obj).returning()
   return records.length > 0 ? records[0] : null
 }
 
-export async function getSongArtistsByIds(db: NodePgDatabase, ids: number[]): Promise<SongArtistsWithDataDB[]> {
+export async function getSongArtistsByIds(db: DB, ids: number[]): Promise<SongArtistsWithDataDB[]> {
   return await db
     .select()
     .from(songArtists)
@@ -203,7 +202,7 @@ export async function getSongArtistsByIds(db: NodePgDatabase, ids: number[]): Pr
     .orderBy(songArtists.sort_order)
 }
 
-export async function getSongWritersByIds(db: NodePgDatabase, ids: number[]): Promise<SongWritersWithDataDB[]> {
+export async function getSongWritersByIds(db: DB, ids: number[]): Promise<SongWritersWithDataDB[]> {
   return await db
     .select()
     .from(songWriters)
@@ -212,16 +211,16 @@ export async function getSongWritersByIds(db: NodePgDatabase, ids: number[]): Pr
     .orderBy(songWriters.sort_order)
 }
 
-export async function insertSongArtists(db: NodePgDatabase, obj: NewSongArtistsDB[]): Promise<void> {
+export async function insertSongArtists(db: DB, obj: NewSongArtistsDB[]): Promise<void> {
   await db.insert(songArtists).values(obj)
 }
 
-export async function insertSongWriters(db: NodePgDatabase, obj: NewSongWritersDB[]): Promise<void> {
+export async function insertSongWriters(db: DB, obj: NewSongWritersDB[]): Promise<void> {
   await db.insert(songWriters).values(obj)
 }
 
 export async function countStats(
-  db: NodePgDatabase,
+  db: DB,
   from: string | null,
   to: string | null,
   month: number | null,
@@ -252,7 +251,7 @@ export async function countStats(
 }
 
 export async function rankStats(
-  db: NodePgDatabase,
+  db: DB,
   from: string | null,
   to: string | null,
   month: number | null,

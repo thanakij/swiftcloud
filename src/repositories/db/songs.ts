@@ -1,7 +1,6 @@
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
-
 import type { ArtistDB, WriterDB, SongDB, NewSongArtistsDB, NewSongWritersDB } from '@/db/types'
 import type { SongRepository } from '@/repositories/songs'
+import type { DB } from '@/types/common'
 import type { ListSongsParam, ListSongs, Id, Song, SongIn } from '@/types/songs'
 
 import {
@@ -18,9 +17,9 @@ import { getAlbum, getAlbumByUuid, getAlbumsByIds, getArtistByUuid, getWriterByU
 import { getAlbumMap, mapSong, mapNewSongDB, getSongArtistsMap, getSongWritersMap } from '@/repositories/db/utils'
 
 export class DbSongRepository implements SongRepository {
-  private db: NodePgDatabase
+  private db: DB
 
-  public constructor(db: NodePgDatabase) {
+  public constructor(db: DB) {
     this.db = db
   }
 
