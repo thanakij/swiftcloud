@@ -1,7 +1,7 @@
 import type { OpenAPIHono } from '@hono/zod-openapi'
 import type Redis from 'ioredis'
 
-import { drizzle } from 'drizzle-orm/node-postgres'
+import { drizzle } from 'drizzle-orm/postgres-js'
 import { env } from 'hono/adapter'
 
 import type { Id as AlbumId } from '@/types/albums'

@@ -19,11 +19,11 @@ export class RankingService {
       `group=${param.group},offset=${param.offset},limit=${param.limit}`
     // cache HIT
     if (this.cache && await exists(this.cache, key)) {
-      console.log('HIT')
+      console.log('cache HIT')
       return await get(this.cache, key) as Ranking
     }
     // cache MISS
-    if (this.cache) console.log('MISS')
+    if (this.cache) console.log('cache MISS')
     const ranking = await this.statRepository.rank(param)
     if (this.cache) await set(this.cache, key, ranking)
     return ranking

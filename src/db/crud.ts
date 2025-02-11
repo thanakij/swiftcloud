@@ -1,5 +1,5 @@
 import { sql, and, count, sum, eq, ilike, inArray, isNotNull } from 'drizzle-orm'
-import pg from 'pg'
+import postgres from 'postgres'
 
 import type {
   ArtistDB,
@@ -21,13 +21,11 @@ import { getOrderBy } from '@/utils'
 
 export const MAX_LIMIT = 100
 
-const { Pool } = pg
-
 export function getDB(env: Env): PgClient | null {
   const { DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME } = env
   if (!DB_PASS || !DB_NAME) return null
   const URL = `postgresql://${DB_USER ?? 'postgres'}:${DB_PASS}@${DB_HOST ?? 'db'}:${DB_PORT ?? 5432}/${DB_NAME}`
-  return new Pool({ connectionString: URL })
+  return postgres(URL)
 }
 
 export async function getArtist(db: DB, id: number): Promise<ArtistDB | null> {

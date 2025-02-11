@@ -1,7 +1,18 @@
 import { sql } from 'drizzle-orm'
-import { pgTable, serial, uuid, varchar, timestamp, integer, check, unique, index, pgEnum } from 'drizzle-orm/pg-core'
+import {
+  pgEnum as Enum,
+  pgTable as Table,
+  serial,
+  uuid,
+  varchar,
+  timestamp,
+  integer,
+  check,
+  unique,
+  index,
+} from 'drizzle-orm/pg-core'
 
-export const artists = pgTable('artists', {
+export const artists = Table('artists', {
   id: serial().primaryKey(),
   uuid: uuid().notNull().defaultRandom().unique(),
   name: varchar('name', { length: 255 }).notNull(),
@@ -9,7 +20,7 @@ export const artists = pgTable('artists', {
   updated_at: timestamp().notNull().defaultNow(),
 })
 
-export const writers = pgTable('writers', {
+export const writers = Table('writers', {
   id: serial().primaryKey(),
   uuid: uuid().notNull().defaultRandom().unique(),
   name: varchar('name', { length: 255 }).notNull(),
@@ -17,7 +28,7 @@ export const writers = pgTable('writers', {
   updated_at: timestamp().notNull().defaultNow(),
 })
 
-export const albums = pgTable('albums', {
+export const albums = Table('albums', {
   id: serial().primaryKey(),
   uuid: uuid().notNull().defaultRandom().unique(),
   name: varchar('name', { length: 255 }).notNull(),
@@ -25,7 +36,7 @@ export const albums = pgTable('albums', {
   updated_at: timestamp().notNull().defaultNow(),
 })
 
-export const songs = pgTable('songs', {
+export const songs = Table('songs', {
   id: serial().primaryKey(),
   uuid: uuid().notNull().defaultRandom().unique(),
   name: varchar('name', { length: 255 }).notNull(),
@@ -36,9 +47,9 @@ export const songs = pgTable('songs', {
   updated_at: timestamp().notNull().defaultNow(),
 })
 
-export const artistRole = pgEnum('artistRole', ['primary', 'featuring'])
+export const artistRole = Enum('artistRole', ['primary', 'featuring'])
 
-export const songArtists = pgTable('song_artists', {
+export const songArtists = Table('song_artists', {
   id: serial().primaryKey(),
   song_id: integer().notNull().references(() => songs.id),
   artist_id: integer().notNull().references(() => artists.id),
@@ -51,7 +62,7 @@ export const songArtists = pgTable('song_artists', {
   }
 })
 
-export const songWriters = pgTable('song_writers', {
+export const songWriters = Table('song_writers', {
   id: serial().primaryKey(),
   song_id: integer().notNull().references(() => songs.id),
   writer_id: integer().notNull().references(() => writers.id),
@@ -63,7 +74,7 @@ export const songWriters = pgTable('song_writers', {
   }
 })
 
-export const stats = pgTable('stats', {
+export const stats = Table('stats', {
   id: serial().primaryKey(),
   song_id: integer().notNull().references(() => songs.id),
   album_id: integer().references(() => albums.id),
