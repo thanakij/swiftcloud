@@ -20,7 +20,7 @@ FROM base AS production
 WORKDIR /app
 USER bun
 COPY --chown=bun:bun --from=build /home/bun/app/node_modules node_modules
-COPY package.json .
+COPY tsconfig.json package.json .
 COPY src src
 ENV NODE_ENV=production
 CMD ["bun", "src/index.ts"]
