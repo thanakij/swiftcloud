@@ -2,6 +2,7 @@ services:
   server:
     build:
       context: .
+      target: ${NODE_ENV:-development}
     environment:
       DEBUG: ${DEBUG:-}
       DB_HOST: ${DB_HOST:-db}
@@ -13,6 +14,8 @@ services:
       CACHE_PORT: ${CACHE_PORT:-6379}
       CACHE_PASS: ${CACHE_PASS:-}
       CACHE_DB: ${CACHE_DB:-0}
+    volumes:
+      - ./src:/app/src
     ports:
       - 3000:3000
 
