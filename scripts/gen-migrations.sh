@@ -7,4 +7,4 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-npx drizzle-kit generate --name="$1"
+docker compose exec -it server bun run db:generate -- --name="$1"
