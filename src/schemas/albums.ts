@@ -1,5 +1,6 @@
 import { z } from '@hono/zod-openapi'
 
+import { DEFAULT_PAGE_SIZE } from '@/constants'
 import { Meta } from '@/schemas/common'
 
 export const Id = z.string().uuid().brand<'AlbumId'>()
@@ -8,7 +9,7 @@ export const ListAlbumsParam = z
   .object({
     q: z.string().nullable().optional().default(null), // search names using ILIKE
     offset: z.coerce.number().optional().default(0),
-    limit: z.coerce.number().optional().default(10),
+    limit: z.coerce.number().optional().default(DEFAULT_PAGE_SIZE),
     sort: z.string().nullable().optional().default(null).openapi({
       example: 'name', // 'name,-created_at' = name ASC, then created_at DESC
     }),

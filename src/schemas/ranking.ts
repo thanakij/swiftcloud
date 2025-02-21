@@ -1,5 +1,6 @@
 import { z } from '@hono/zod-openapi'
 
+import { DEFAULT_PAGE_SIZE } from '@/constants'
 import { Album } from '@/schemas/albums'
 import { Meta } from '@/schemas/common'
 import { SongBase } from '@/schemas/songs'
@@ -21,7 +22,7 @@ export const RankingParam = z
     year: z.coerce.number().nullable().optional().default(null),
     group: GroupBy.nullable().optional().default('song'),
     offset: z.coerce.number().optional().default(0),
-    limit: z.coerce.number().optional().default(10),
+    limit: z.coerce.number().optional().default(DEFAULT_PAGE_SIZE),
   })
   .openapi('RankingParam')
 
