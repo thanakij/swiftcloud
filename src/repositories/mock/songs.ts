@@ -23,8 +23,9 @@ export class MockSongRepository implements SongRepository {
   }
 
   async list(param: ListSongsParam): Promise<ListSongs> {
-    const data = SONGS.slice(param.offset, param.limit)
-    return { meta: { total: SONGS.length, count: data.length }, data }
+    const { offset, limit } = param
+    const data = SONGS.slice(offset, limit)
+    return { meta: { limit, total: SONGS.length, count: data.length }, data }
   }
 
   async get(id: Id): Promise<Song | null> {

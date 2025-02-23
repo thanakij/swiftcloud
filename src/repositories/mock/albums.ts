@@ -5,8 +5,9 @@ import { ALBUMS } from '@/data/mock'
 
 export class MockAlbumRepository implements AlbumRepository {
   async list(param: ListAlbumsParam): Promise<ListAlbums> {
-    const data = ALBUMS.slice(param.offset, param.limit)
-    return { meta: { total: ALBUMS.length, count: data.length }, data }
+    const { offset, limit } = param
+    const data = ALBUMS.slice(offset, limit)
+    return { meta: { limit, total: ALBUMS.length, count: data.length }, data }
   }
 
   async get(id: Id): Promise<Album | null> {

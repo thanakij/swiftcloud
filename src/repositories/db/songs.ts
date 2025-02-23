@@ -24,7 +24,8 @@ export class DbSongRepository implements SongRepository {
   }
 
   async list(param: ListSongsParam): Promise<ListSongs> {
-    const records = await listSongs(this.db, param.q, param.album_id, param.year, param.offset, param.limit, param.sort)
+    const { offset, limit, sort } = param
+    const records = await listSongs(this.db, param.q, param.album_id, param.year, offset, limit, sort)
     const songs_id = records.map((each) => each.id)
     // artists
     const songArtists = await getSongArtistsByIds(this.db, songs_id) // avoid N+1 query
@@ -44,7 +45,7 @@ export class DbSongRepository implements SongRepository {
       return mapSong(each, artists, writers, album)
     })
     const total = await countSongs(this.db, param.q, param.album_id, param.year)
-    return { meta: { total, count: data.length }, data }
+    return { meta: { limit, total, count: data.length }, data }
   }
 
   async get(id: Id): Promise<Song | null> {

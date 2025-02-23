@@ -12,10 +12,13 @@ export const ZDate = z.string().date()
 
 export const Meta = z
   .object({
+    limit: z.number().openapi({
+      example: 50,
+    }),
     total: z.number().openapi({
-      example: 10,
+      example: 10000,
     }),
     count: z.number().openapi({
-      example: 2,
+      example: 8,
     }),
   })

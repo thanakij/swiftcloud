@@ -14,17 +14,8 @@ export class DbStatRepository implements StatRepository {
   }
 
   async rank(param: RankingParam): Promise<Ranking> {
-    const records = await rankStats(
-      this.db,
-      param.from,
-      param.to,
-      param.month,
-      param.year,
-      param.group,
-      param.offset,
-      param.limit,
-    )
-    console.log(records)
+    const { offset, limit } = param
+    const records = await rankStats(this.db, param.from, param.to, param.month, param.year, param.group, offset, limit)
     const ids = records.map((each) => each.id)
     let data: DataWithStat[] = []
     if (param.group === 'album') {
@@ -37,6 +28,6 @@ export class DbStatRepository implements StatRepository {
       data = records.map((each) => ({ data: mapSongBase(songsMap[each.id]!), stat: { plays: each.n } }))
     }
     const total = await countStats(this.db, param.from, param.to, param.month, param.year, param.group)
-    return { meta: { total, count: data.length }, data }
+    return { meta: { limit, total, count: data.length }, data }
   }
 }

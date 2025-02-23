@@ -13,10 +13,11 @@ export class DbAlbumRepository implements AlbumRepository {
   }
 
   async list(param: ListAlbumsParam): Promise<ListAlbums> {
-    const records = await listAlbums(this.db, param.q, param.offset, param.limit, param.sort)
+    const { offset, limit, sort } = param
+    const records = await listAlbums(this.db, param.q, offset, limit, sort)
     const data = records.map(mapAlbum)
     const total = await countAlbums(this.db, param.q)
-    return { meta: { total, count: data.length }, data }
+    return { meta: { limit, total, count: data.length }, data }
   }
 
   async get(id: Id): Promise<Album | null> {
