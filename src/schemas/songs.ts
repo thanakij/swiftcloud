@@ -1,6 +1,6 @@
 import { z } from '@hono/zod-openapi'
 
-import { DEFAULT_PAGE_SIZE } from '@/constants'
+import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@/constants'
 import { Id as AlbumId, Album } from '@/schemas/albums'
 import { Id as ArtistId, Artist } from '@/schemas/artists'
 import { Meta } from '@/schemas/common'
@@ -13,8 +13,8 @@ export const ListSongsParam = z
     q: z.string().nullable().optional().default(null), // search names using ILIKE
     album_id: AlbumId.nullable().optional().default(null), // filter by album
     year: z.coerce.number().nullable().optional().default(null), // filter by released year
-    offset: z.coerce.number().optional().default(0),
-    limit: z.coerce.number().optional().default(DEFAULT_PAGE_SIZE),
+    offset: z.coerce.number().nonnegative().optional().default(0),
+    limit: z.coerce.number().nonnegative().max(MAX_PAGE_SIZE).optional().default(DEFAULT_PAGE_SIZE),
     sort: z.string().nullable().optional().default(null).openapi({
       // '-year,name' = released year DESC, then name ASC
       // '-plays' = all-time plays DESC
