@@ -30,7 +30,7 @@ export function getOrderBy(schema: SchemaType, sort: string | null, columnMap?: 
     const f = each[0] === '-' ? desc : asc
     const key = each.replace('-', '').trim()
     if (!key) continue
-    const mappedKey = columnMap ? columnMap[key] : key
+    const mappedKey = columnMap ? (columnMap[key] ?? key) : key
     if (!mappedKey || !(mappedKey in schema)) continue
     const column = schema[mappedKey]
     if (column) sortFields.push(f(column))
