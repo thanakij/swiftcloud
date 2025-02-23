@@ -1,4 +1,5 @@
 import { sql, and, count, sum, eq, ilike, inArray, isNotNull } from 'drizzle-orm'
+import { getTableColumns } from 'drizzle-orm'
 import postgres from 'postgres'
 
 import type {
@@ -74,8 +75,7 @@ export async function listAlbums(
   db: DB, q: string | null, offset: number, limit: number, sort: string | null,
 ): Promise<AlbumDB[]> {
   const filters = q ? [ilike(albums.name, `%${q}%`)] : []
-  // @ts-expect-error not typed well
-  const sorting = getOrderBy(albums, sort ?? 'name')
+  const sorting = getOrderBy(getTableColumns(albums), sort ?? 'name')
   return await db
     .select()
     .from(albums)
@@ -148,8 +148,7 @@ export async function listSongs(
     filters.push(eq(songs.album_id, album.id))
   }
   if (year) filters.push(eq(songs.released_year, year))
-  // @ts-expect-error not typed well
-  const sorting = getOrderBy(songs, sort ?? 'name', { year: 'released_year', plays: 'total_plays' })
+  const sorting = getOrderBy(getTableColumns(songs), sort ?? 'name', { year: 'released_year', plays: 'total_plays' })
   return await db
     .select()
     .from(songs)
