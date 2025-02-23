@@ -1,6 +1,8 @@
 import type { AlbumRepository } from '@/repositories/albums'
 import type { ListAlbumsParam, ListAlbums, Id, Album, AlbumIn } from '@/types/albums'
 
+import { MAX_PAGE_SIZE } from '@/constants'
+
 export class AlbumService {
   private albumRepository: AlbumRepository
 
@@ -9,6 +11,7 @@ export class AlbumService {
   }
 
   async list(param: ListAlbumsParam): Promise<ListAlbums> {
+    if (param.limit > MAX_PAGE_SIZE) param.limit = MAX_PAGE_SIZE
     return await this.albumRepository.list(param)
   }
 

@@ -4,6 +4,7 @@ import type { StatRepository } from '@/repositories/stats'
 import type { RankingParam, Ranking } from '@/types/ranking'
 
 import { exists, get, set } from '@/cache'
+import { MAX_PAGE_SIZE } from '@/constants'
 
 export class RankingService {
   private statRepository: StatRepository
@@ -15,6 +16,7 @@ export class RankingService {
   }
 
   async rank(param: RankingParam): Promise<Ranking> {
+    if (param.limit > MAX_PAGE_SIZE) param.limit = MAX_PAGE_SIZE
     const key = `from=${param.from},to=${param.to},month=${param.month},year=${param.year},` +
       `group=${param.group},offset=${param.offset},limit=${param.limit}`
     // cache HIT
