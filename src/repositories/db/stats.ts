@@ -30,11 +30,11 @@ export class DbStatRepository implements StatRepository {
     if (param.group === 'album') {
       const albums = await getAlbumsByIds(this.db, ids)
       const albumsMap = getAlbumMap(albums)
-      data = records.map((each) => ({ data: mapAlbum(albumsMap[each.id]), stat: { plays: each.n } }))
+      data = records.map((each) => ({ data: mapAlbum(albumsMap[each.id]!), stat: { plays: each.n } }))
     } else {
       const songs = await getSongsByIds(this.db, ids)
       const songsMap = getSongMap(songs)
-      data = records.map((each) => ({ data: mapSongBase(songsMap[each.id]), stat: { plays: each.n } }))
+      data = records.map((each) => ({ data: mapSongBase(songsMap[each.id]!), stat: { plays: each.n } }))
     }
     const total = await countStats(this.db, param.from, param.to, param.month, param.year, param.group)
     return { meta: { total, count: data.length }, data }

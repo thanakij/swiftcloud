@@ -38,9 +38,9 @@ export class DbSongRepository implements SongRepository {
     const albumsMap = getAlbumMap(albums)
     // format
     const data = records.map((each) => {
-      const artists = each.id in songArtistsMap ? songArtistsMap[each.id] : []
-      const writers = each.id in songWritersMap ? songWritersMap[each.id] : []
-      const album = each.album_id ? albumsMap[each.album_id] : null
+      const artists = each.id in songArtistsMap ? songArtistsMap[each.id]! : []
+      const writers = each.id in songWritersMap ? songWritersMap[each.id]! : []
+      const album = each.album_id ? albumsMap[each.album_id]! : null
       return mapSong(each, artists, writers, album)
     })
     const total = await countSongs(this.db, param.q, param.album_id, param.year)
@@ -52,11 +52,11 @@ export class DbSongRepository implements SongRepository {
     // artists
     const songArtists = await getSongArtistsByIds(this.db, record ? [record.id] : [])
     const songArtistsMap = getSongArtistsMap(songArtists)
-    const artists = record && (record.id in songArtistsMap) ? songArtistsMap[record.id] : []
+    const artists = record && (record.id in songArtistsMap) ? songArtistsMap[record.id]! : []
     // writers
     const songWriters = await getSongWritersByIds(this.db, record ? [record.id] : [])
     const songWritersMap = getSongWritersMap(songWriters)
-    const writers = record && (record.id in songWritersMap) ? songWritersMap[record.id] : []
+    const writers = record && (record.id in songWritersMap) ? songWritersMap[record.id]! : []
     // album
     const album = record && record.album_id ? await getAlbum(this.db, record.album_id) : null
     // format

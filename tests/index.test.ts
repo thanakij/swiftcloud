@@ -12,8 +12,8 @@ describe('/ranking', () => {
     expect(result.meta.total).toBe(172)
     expect(result.meta.count).toBe(10)
     expect(result.data.length).toBe(result.meta.count)
-    expect(result.data[0].data.name).toBe('Style')
-    expect(result.data[0].stat.plays).toBe(307)
+    expect(result.data[0]?.data.name).toBe('Style')
+    expect(result.data[0]?.stat.plays).toBe(307)
   })
 
   test('GET /ranking (by 10 albums)', async () => {
@@ -23,7 +23,7 @@ describe('/ranking', () => {
     expect(result.meta.total).toBe(35)
     expect(result.meta.count).toBe(10)
     expect(result.data.length).toBe(result.meta.count)
-    expect(result.data[0].data.name).toBe('Lover')
-    expect(result.data[0].stat.plays).toBe(3130)
+    expect(result.data[0]?.data.name).toBe('Lover')
+    expect(result.data[0]?.stat.plays).toBe(3130)
   })
 })

@@ -13,7 +13,7 @@ export function createRoute<
   request: RequestSchema,
   responses: ResponsesSchema,
 ) {
-  const tags = [path.split('/')[1]]
+  const tags = [path.split('/')[1] ?? '']
   const route = _createRoute({ method, path, request, responses, tags })
   return route
 }

@@ -34,7 +34,7 @@ export async function getArtist(db: DB, id: number): Promise<ArtistDB | null> {
     .from(artists)
     .where(eq(artists.id, id))
     .limit(1)
-  return records.length > 0 ? records[0] : null
+  return records[0] ?? null
 }
 
 export async function getArtistByUuid(db: DB, uuid: string): Promise<ArtistDB | null> {
@@ -43,7 +43,7 @@ export async function getArtistByUuid(db: DB, uuid: string): Promise<ArtistDB | 
     .from(artists)
     .where(eq(artists.uuid, uuid))
     .limit(1)
-  return records.length > 0 ? records[0] : null
+  return records[0] ?? null
 }
 
 export async function getWriter(db: DB, id: number): Promise<WriterDB | null> {
@@ -52,7 +52,7 @@ export async function getWriter(db: DB, id: number): Promise<WriterDB | null> {
     .from(artists)
     .where(eq(artists.id, id))
     .limit(1)
-  return records.length > 0 ? records[0] : null
+  return records[0] ?? null
 }
 
 export async function getWriterByUuid(db: DB, uuid: string): Promise<WriterDB | null> {
@@ -61,13 +61,13 @@ export async function getWriterByUuid(db: DB, uuid: string): Promise<WriterDB | 
     .from(writers)
     .where(eq(writers.uuid, uuid))
     .limit(1)
-  return records.length > 0 ? records[0] : null
+  return records[0] ?? null
 }
 
 export async function countAlbums(db: DB, q: string | null): Promise<number> {
   const filters = q ? [ilike(albums.name, `%${q}%`)] : []
   const records = await db.select({ n: count() }).from(albums).where(and(...filters))
-  return records[0].n
+  return records[0]?.n ?? 0
 }
 
 export async function listAlbums(
@@ -96,7 +96,7 @@ export async function getAlbum(db: DB, id: number): Promise<AlbumDB | null> {
     .from(albums)
     .where(eq(albums.id, id))
     .limit(1)
-  return records.length > 0 ? records[0] : null
+  return records[0] ?? null
 }
 
 export async function getAlbumByUuid(db: DB, uuid: string): Promise<AlbumDB | null> {
@@ -105,7 +105,7 @@ export async function getAlbumByUuid(db: DB, uuid: string): Promise<AlbumDB | nu
     .from(albums)
     .where(eq(albums.uuid, uuid))
     .limit(1)
-  return records.length > 0 ? records[0] : null
+  return records[0] ?? null
 }
 
 export async function getAlbumsByIds(db: DB, ids: number[]): Promise<AlbumDB[]> {
@@ -117,7 +117,7 @@ export async function getAlbumsByIds(db: DB, ids: number[]): Promise<AlbumDB[]> 
 
 export async function insertAlbum(db: DB, obj: NewAlbumDB): Promise<AlbumDB | null> {
   const records = await db.insert(albums).values(obj).returning()
-  return records.length > 0 ? records[0] : null
+  return records[0] ?? null
 }
 
 export async function countSongs(
@@ -134,7 +134,7 @@ export async function countSongs(
   }
   if (year) filters.push(eq(songs.released_year, year))
   const records = await db.select({ n: count() }).from(songs).where(and(...filters))
-  return records[0].n
+  return records[0]?.n ?? 0
 }
 
 export async function listSongs(
@@ -177,7 +177,7 @@ export async function getSong(db: DB, id: number): Promise<SongDB | null> {
     .from(songs)
     .where(eq(songs.id, id))
     .limit(1)
-  return records.length > 0 ? records[0] : null
+  return records[0] ?? null
 }
 
 export async function getSongByUuid(db: DB, uuid: string): Promise<SongDB | null> {
@@ -186,7 +186,7 @@ export async function getSongByUuid(db: DB, uuid: string): Promise<SongDB | null
     .from(songs)
     .where(eq(songs.uuid, uuid))
     .limit(1)
-  return records.length > 0 ? records[0] : null
+  return records[0] ?? null
 }
 
 export async function getSongsByIds(db: DB, ids: number[]): Promise<SongDB[]> {
@@ -198,7 +198,7 @@ export async function getSongsByIds(db: DB, ids: number[]): Promise<SongDB[]> {
 
 export async function insertSong(db: DB, obj: NewSongDB): Promise<SongDB | null> {
   const records = await db.insert(songs).values(obj).returning()
-  return records.length > 0 ? records[0] : null
+  return records[0] ?? null
 }
 
 export async function getSongArtistsByIds(db: DB, ids: number[]): Promise<SongArtistsWithDataDB[]> {
@@ -239,12 +239,12 @@ export async function countStats(
   const filters = group === 'album' ? [isNotNull(groupByField)] : []
   if (from) {
     const splits = from.split('-')
-    const val = (parseInt(splits[0], 10) * 100) + parseInt(splits[1], 10)
+    const val = (parseInt(splits[0]!, 10) * 100) + parseInt(splits[1]!, 10)
     filters.push(sql`(year * 100) + month >= ${val}`)
   }
   if (to) {
     const splits = to.split('-')
-    const val = (parseInt(splits[0], 10) * 100) + parseInt(splits[1], 10)
+    const val = (parseInt(splits[0]!, 10) * 100) + parseInt(splits[1]!, 10)
     filters.push(sql`(year * 100) + month <= ${val}`)
   }
   if (month) filters.push(eq(stats.month, month))
@@ -255,7 +255,7 @@ export async function countStats(
     .where(and(...filters))
     .groupBy(groupByField)
   const records = await db.select({ n: count() }).from(subq.as('subq'))
-  return records[0].n
+  return records[0]?.n ?? 0
 }
 
 export async function rankStats(
@@ -272,12 +272,12 @@ export async function rankStats(
   const filters = group === 'album' ? [isNotNull(groupByField)] : []
   if (from) {
     const splits = from.split('-')
-    const val = (parseInt(splits[0], 10) * 100) + parseInt(splits[1], 10)
+    const val = (parseInt(splits[0]!, 10) * 100) + parseInt(splits[1]!, 10)
     filters.push(sql`(year * 100) + month >= ${val}`)
   }
   if (to) {
     const splits = to.split('-')
-    const val = (parseInt(splits[0], 10) * 100) + parseInt(splits[1], 10)
+    const val = (parseInt(splits[0]!, 10) * 100) + parseInt(splits[1]!, 10)
     filters.push(sql`(year * 100) + month <= ${val}`)
   }
   if (month) filters.push(eq(stats.month, month))

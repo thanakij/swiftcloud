@@ -22,15 +22,18 @@ export function formatZodErrors(error: ZodError): string[] {
 type SchemaType = Record<string, Column>
 type SortedField = ReturnType<typeof desc>
 
-export function getOrderBy(schema: SchemaType, sort: string | null, columnMap: Record<string, string>): SortedField[] {
-  if (!sort) return [asc(schema['id'])] // default is to sort by 'id' column
+export function getOrderBy(schema: SchemaType, sort: string | null, columnMap?: Record<string, string>): SortedField[] {
+  if (!sort) return []
   const sortFields: SortedField[] = []
   for (const each of sort.split(',')) {
     if (!each) continue
     const f = each[0] === '-' ? desc : asc
     const key = each.replace('-', '').trim()
-    if (!key || !(key in columnMap)) continue
-    sortFields.push(f(schema[columnMap[key]]))
+    if (!key) continue
+    const mappedKey = columnMap ? columnMap[key] : key
+    if (!mappedKey || !(mappedKey in schema)) continue
+    const column = schema[mappedKey]
+    if (column) sortFields.push(f(column))
   }
   return sortFields
 }

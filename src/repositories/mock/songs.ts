@@ -29,7 +29,7 @@ export class MockSongRepository implements SongRepository {
 
   async get(id: Id): Promise<Song | null> {
     const founds = SONGS.filter((each) => each.id === id)
-    return founds.length > 0 ? founds[0] : null
+    return founds[0] ?? null
   }
 
   async create(input: SongIn): Promise<Id> {
@@ -43,7 +43,7 @@ export class MockSongRepository implements SongRepository {
       for (const [i, id] of artists_id.entries()) {
         const artist = await this.artistRepository.get(id)
         if (!artist) throw new Error(`Artist[${i}] not found`)
-        artists.push({ ...artist, role: artists_role[i] })
+        artists.push({ ...artist, role: artists_role[i]! })
       }
     }
     if (artists.length <= 0) throw new Error('At least one artist is required')

@@ -99,7 +99,7 @@ export function getSongArtistsMap(songArtists: SongArtistsWithDataDB[]): Record<
   return songArtists.reduce<Record<string, ArtistWithRoleDB[]>>((map, obj) => {
     const song_id = obj.song_artists.song_id
     if (!(song_id in map)) map[song_id] = []
-    map[song_id].push({ ...obj.artists, role: obj.song_artists.role }) // preserve the sort order
+    map[song_id]!.push({ ...obj.artists, role: obj.song_artists.role }) // preserve the sort order
     return map
   }, {})
 }
@@ -108,7 +108,7 @@ export function getSongWritersMap(songWriters: SongWritersWithDataDB[]): Record<
   return songWriters.reduce<Record<string, WriterDB[]>>((map, obj) => {
     const song_id = obj.song_writers.song_id
     if (!(song_id in map)) map[song_id] = []
-    map[song_id].push(obj.writers) // preserve the sort order
+    map[song_id]!.push(obj.writers) // preserve the sort order
     return map
   }, {})
 }

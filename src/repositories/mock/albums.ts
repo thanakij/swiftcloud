@@ -11,7 +11,7 @@ export class MockAlbumRepository implements AlbumRepository {
 
   async get(id: Id): Promise<Album | null> {
     const founds = ALBUMS.filter((each) => each.id === id)
-    return founds.length > 0 ? founds[0] : null
+    return founds[0] ?? null
   }
 
   async create(input: AlbumIn): Promise<Id> {
