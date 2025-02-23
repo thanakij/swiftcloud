@@ -2,14 +2,14 @@ import { sql } from 'drizzle-orm'
 import {
   pgEnum as Enum,
   pgTable as Table,
-  serial,
-  uuid,
-  varchar,
-  timestamp,
-  integer,
   check,
   unique,
   index,
+  integer,
+  serial,
+  timestamp,
+  uuid,
+  varchar,
 } from 'drizzle-orm/pg-core'
 
 export const artists = Table('artists', {
@@ -56,9 +56,9 @@ export const songArtists = Table('song_artists', {
   role: artistRole().notNull().default('primary'),
   sort_order: integer().notNull(),
   created_at: timestamp().notNull().defaultNow(),
-}, (t) => {
+}, (table) => {
   return {
-    unq: unique().on(t.song_id, t.artist_id),
+    unq: unique().on(table.song_id, table.artist_id),
   }
 })
 
@@ -68,9 +68,9 @@ export const songWriters = Table('song_writers', {
   writer_id: integer().notNull().references(() => writers.id),
   sort_order: integer().notNull(),
   created_at: timestamp().notNull().defaultNow(),
-}, (t) => {
+}, (table) => {
   return {
-    unq: unique().on(t.song_id, t.writer_id),
+    unq: unique().on(table.song_id, table.writer_id),
   }
 })
 
@@ -82,10 +82,10 @@ export const stats = Table('stats', {
   month: integer().notNull(),
   plays: integer().notNull(),
   created_at: timestamp().notNull().defaultNow(),
-}, (t) => {
+}, (table) => {
   return {
-    unq: unique().on(t.song_id, t.year, t.month),
-    album_idx: index('stats_album_idx').on(t.album_id, t.plays),
-    check: check('month', sql`${t.month} >= 1 AND ${t.month} <= 12`),
+    unq: unique().on(table.song_id, table.year, table.month),
+    album_idx: index('stats_album_idx').on(table.album_id, table.plays),
+    check: check('month', sql`${table.month} >= 1 AND ${table.month} <= 12`),
   }
 })
