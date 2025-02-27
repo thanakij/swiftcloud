@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM oven/bun:1.1.42-slim AS base
+FROM oven/bun:1.2.4-slim AS base
 
 FROM base AS deps
 ENV NODE_ENV=development
